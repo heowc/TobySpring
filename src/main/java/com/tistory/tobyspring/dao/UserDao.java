@@ -11,10 +11,7 @@ import java.sql.*;
 public class UserDao {
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection c = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-                                                    "test",
-                                                    "test");
+        Connection c = getConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "INSERT INTO USERS(id, name, password) VALUES (?,?,?)"
@@ -30,10 +27,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection c = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-                "test",
-                "test");
+        Connection c = getConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "SELECT * FROM USERS WHERE ID = ?"
@@ -52,5 +46,33 @@ public class UserDao {
         c.close();
 
         return user;
+    }
+
+    public void createTable() throws ClassNotFoundException, SQLException {
+        Connection c = getConnection();
+
+        PreparedStatement ps = c.prepareStatement(
+                "CREATE TABLE USERS ( " +
+                        "ID VARCHAR(10) PRIMARY KEY, " +
+                        "NAME VARCHAR(20) NOT NULL, " +
+                        "PASSWORD VARCHAR(10) NOT NULL " +
+                        ")"
+        );
+
+        ps.executeUpdate();
+
+        ps.close();
+        c.close();
+    }
+
+    /*
+        관심사의 분리, 메소드 추출
+     */
+    private Connection getConnection() throws ClassNotFoundException, SQLException {
+        Class.forName("org.h2.Driver");
+        Connection c = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+                                                    "test",
+                                                    "test");
+        return c;
     }
 }
