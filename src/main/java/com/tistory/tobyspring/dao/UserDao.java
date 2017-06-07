@@ -5,10 +5,11 @@ import com.tistory.tobyspring.domain.User;
 import java.sql.*;
 
 /**
- * DAO (Data Access Object)
- * 사용자 정보를 DB에 넣고 관리할 수 있는 클래스
+ * DAO (Data Access Object) <BR>
+ * 사용자 정보를 DB에 넣고 관리할 수 있는 클래스 <BR>
+ * 템플릿 메소드 패턴
  */
-public class UserDao {
+public abstract class UserDao {
 
     public void add(User user) throws ClassNotFoundException, SQLException {
         Connection c = getConnection();
@@ -66,13 +67,7 @@ public class UserDao {
     }
 
     /*
-        관심사의 분리, 메소드 추출
+        팩토리 메소드 패턴
      */
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection c = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-                                                    "test",
-                                                    "test");
-        return c;
-    }
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 }

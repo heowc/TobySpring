@@ -1,5 +1,6 @@
 package com.tistory.tobyspring;
 
+import com.tistory.tobyspring.dao.NUserDao;
 import com.tistory.tobyspring.dao.UserDao;
 import com.tistory.tobyspring.domain.User;
 
@@ -8,7 +9,7 @@ import java.sql.SQLException;
 public class TobySpringApplication {
 
     public static void main(String [] args) throws SQLException, ClassNotFoundException {
-        UserDao dao = new UserDao();
+        UserDao dao = new NUserDao();
         dao.createTable();
 
         /* ============================================================================ */
