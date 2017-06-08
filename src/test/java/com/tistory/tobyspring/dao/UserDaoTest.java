@@ -1,15 +1,17 @@
-package com.tistory.tobyspring;
+package com.tistory.tobyspring.dao;
 
-import com.tistory.tobyspring.dao.NUserDao;
-import com.tistory.tobyspring.dao.UserDao;
+import com.tistory.tobyspring.dao.connection.ConnectionMaker;
+import com.tistory.tobyspring.dao.connection.NConnectionMaker;
 import com.tistory.tobyspring.domain.User;
 
 import java.sql.SQLException;
 
-public class TobySpringApplication {
+public class UserDaoTest {
 
     public static void main(String [] args) throws SQLException, ClassNotFoundException {
-        UserDao dao = new NUserDao();
+        // 전략 패턴
+        ConnectionMaker connectionMaker = new NConnectionMaker();
+        UserDao dao = new UserDao(connectionMaker);
         dao.createTable();
 
         /* ============================================================================ */

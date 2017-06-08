@@ -1,5 +1,6 @@
 package com.tistory.tobyspring.dao;
 
+import com.tistory.tobyspring.dao.connection.ConnectionMaker;
 import com.tistory.tobyspring.domain.User;
 
 import java.sql.*;
@@ -7,12 +8,20 @@ import java.sql.*;
 /**
  * DAO (Data Access Object) <BR>
  * 사용자 정보를 DB에 넣고 관리할 수 있는 클래스 <BR>
- * 템플릿 메소드 패턴
  */
-public abstract class UserDao {
+public class UserDao {
+
+    /*
+        관계설정 책임의 분리 (높은 응집도, 낮은 결합도)
+     */
+    private ConnectionMaker connectionMaker;
+
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
+    }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection c = getConnection();
+        Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "INSERT INTO USERS(id, name, password) VALUES (?,?,?)"
@@ -28,7 +37,7 @@ public abstract class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection c = getConnection();
+        Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "SELECT * FROM USERS WHERE ID = ?"
@@ -50,7 +59,7 @@ public abstract class UserDao {
     }
 
     public void createTable() throws ClassNotFoundException, SQLException {
-        Connection c = getConnection();
+        Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "CREATE TABLE USERS ( " +
@@ -65,9 +74,4 @@ public abstract class UserDao {
         ps.close();
         c.close();
     }
-
-    /*
-        팩토리 메소드 패턴
-     */
-    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 }
