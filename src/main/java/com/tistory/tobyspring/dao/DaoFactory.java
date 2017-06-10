@@ -17,12 +17,12 @@ public class DaoFactory {
     @Bean
     public UserDao userDao() {
         UserDao userDao = new UserDao();
-        userDao.setConnectionMaker(getConnectionMaker());
+        userDao.setConnectionMaker(connectionMaker());
         return userDao;
     }
 
     @Bean
-    public ConnectionMaker getConnectionMaker() {
+    public ConnectionMaker connectionMaker() {
         return new NConnectionMaker();
     }
 }
