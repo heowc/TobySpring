@@ -1,6 +1,6 @@
 package com.tistory.tobyspring;
 
-import com.tistory.tobyspring.dao.DaoFactory;
+import com.tistory.tobyspring.config.DaoFactory;
 import com.tistory.tobyspring.dao.UserDao;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;

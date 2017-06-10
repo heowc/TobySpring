@@ -1,9 +1,12 @@
 package com.tistory.tobyspring.dao;
 
-import com.tistory.tobyspring.dao.connection.ConnectionMaker;
 import com.tistory.tobyspring.domain.User;
 
-import java.sql.*;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * DAO (Data Access Object) <BR>
@@ -14,14 +17,14 @@ public class UserDao {
     /*
         관계설정 책임의 분리 (높은 응집도, 낮은 결합도)
      */
-    private ConnectionMaker connectionMaker;
+    private DataSource dataSource;
 
-    public void setConnectionMaker(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "INSERT INTO USERS(id, name, password) VALUES (?,?,?)"
@@ -37,7 +40,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "SELECT * FROM USERS WHERE ID = ?"
@@ -59,7 +62,7 @@ public class UserDao {
     }
 
     public void createTable() throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement(
                 "CREATE TABLE USERS ( " +
