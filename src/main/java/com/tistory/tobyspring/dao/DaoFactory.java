@@ -14,10 +14,11 @@ public class DaoFactory {
     /*
         빈 객체(메소드명으로 등록)
      */
-
     @Bean
     public UserDao userDao() {
-        return new UserDao(getConnectionMaker());
+        UserDao userDao = new UserDao();
+        userDao.setConnectionMaker(getConnectionMaker());
+        return userDao;
     }
 
     @Bean
