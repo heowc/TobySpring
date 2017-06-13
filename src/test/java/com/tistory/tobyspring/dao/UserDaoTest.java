@@ -1,26 +1,38 @@
 package com.tistory.tobyspring.dao;
 
 import com.tistory.tobyspring.domain.User;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.sql.SQLException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+// JUnit이 테스트를 진행하는 중에 테스트에 사용할 어플리케이션 컨텍스트를 만들고 관리하는 작업을 진행
+@RunWith(SpringJUnit4ClassRunner.class)
+// 자동으로 만들어줄 어플리케이션 컨텍스트의 설정 파일 위치 지정
+@ContextConfiguration(locations = "/context-datasource.xml")
 public class UserDaoTest {
 
-    private static UserDao dao;
+    @Autowired
+    private ApplicationContext context;
 
-    @BeforeClass
-    public static void beforeClass_init() throws SQLException {
-        ApplicationContext context = new ClassPathXmlApplicationContext("context-datasource.xml");
-        dao = context.getBean("userDao", UserDao.class);
+    @Autowired
+    private UserDao dao;
+
+    @Before
+    public void before_init() throws SQLException {
         dao.createTable();
+
+        System.out.println(context); // 실행되기 전에 한번만 만들어 두고 주입하는 방법
+        System.out.println(this);    // 매번 새로운 오브젝트 생성
     }
 
     @Test

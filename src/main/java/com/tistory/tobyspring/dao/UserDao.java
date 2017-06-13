@@ -98,7 +98,7 @@ public class UserDao {
         Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement(
-                "CREATE TABLE USERS ( " +
+                "CREATE TABLE IF NOT EXISTS USERS ( " +
                         "ID VARCHAR(10) PRIMARY KEY, " +
                         "NAME VARCHAR(20) NOT NULL, " +
                         "PASSWORD VARCHAR(10) NOT NULL " +
