@@ -1,28 +1,27 @@
 package com.tistory.tobyspring.dao;
 
 import com.tistory.tobyspring.domain.User;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.sql.SQLException;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 public class UserDaoTest {
 
-    public static void main(String [] args) throws SQLException, ClassNotFoundException {
-        /*
-            1. 어노테이션 방식
-         */
-//        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-
-        /*
-            2. xml 방식
-         */
-        ApplicationContext context = new GenericXmlApplicationContext("context-datasource.xml");
-
+    @Test
+    public void test_addAndGet() throws SQLException {
+        ApplicationContext context = new ClassPathXmlApplicationContext("context-datasource.xml");
         UserDao dao = context.getBean("userDao", UserDao.class);
         dao.createTable();
 
         /* ============================================================================ */
+
+        dao.deleteAll();
+        assertThat(dao.getCount(), is(0));
 
         User user = new User();
         user.setId("wonchul");
@@ -30,13 +29,11 @@ public class UserDaoTest {
         user.setPassword("1234");
 
         dao.add(user);
-
-        System.out.println(user.getId() + " 등록 성공");
+        assertThat(dao.getCount(), is(1));
 
         User user2 = dao.get(user.getId());
-        System.out.println(user2.getName());
-        System.out.println(user2.getPassword());
 
-        System.out.println(user2.getId() + " 조회 성공");
+        assertThat(user.getName(), is(user2.getName()));
+        assertThat(user.getPassword(), is(user2.getPassword()));
     }
 }
