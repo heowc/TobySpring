@@ -18,7 +18,8 @@ import static org.junit.Assert.assertThat;
 // JUnit이 테스트를 진행하는 중에 테스트에 사용할 어플리케이션 컨텍스트를 만들고 관리하는 작업을 진행
 @RunWith(SpringJUnit4ClassRunner.class)
 // 자동으로 만들어줄 어플리케이션 컨텍스트의 설정 파일 위치 지정
-@ContextConfiguration(locations = "/context-datasource.xml")
+@ContextConfiguration(locations = "/test-context-datasource.xml")
+// @DirtiesContext // 해당 레벨(클래스, 메소드)에 해당하는 컨텍스트 구성이나 상태를 변경
 public class UserDaoTest {
 
     @Autowired
@@ -29,11 +30,22 @@ public class UserDaoTest {
 
     @Before
     public void before_init() throws SQLException {
+//        dao.setDataSource(testDataSource());
+
         dao.createTable();
 
         System.out.println(context); // 실행되기 전에 한번만 만들어 두고 주입하는 방법
         System.out.println(this);    // 매번 새로운 오브젝트 생성
     }
+
+//    public DataSource testDataSource() {
+//        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+//        dataSource.setDriverClass(org.h2.Driver.class);
+//        dataSource.setUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+//        dataSource.setUsername("test");
+//        dataSource.setPassword("1234");
+//        return dataSource;
+//    }
 
     @Test
     public void test_addAndGet() throws SQLException {
