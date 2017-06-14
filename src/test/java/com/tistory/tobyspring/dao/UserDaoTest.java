@@ -33,9 +33,6 @@ public class UserDaoTest {
 //        dao.setDataSource(testDataSource());
 
         dao.createTable();
-
-        System.out.println(context); // 실행되기 전에 한번만 만들어 두고 주입하는 방법
-        System.out.println(this);    // 매번 새로운 오브젝트 생성
     }
 
 //    public DataSource testDataSource() {
