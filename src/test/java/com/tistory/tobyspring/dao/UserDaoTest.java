@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -23,27 +22,12 @@ import static org.junit.Assert.assertThat;
 public class UserDaoTest {
 
     @Autowired
-    private ApplicationContext context;
-
-    @Autowired
     private UserDao dao;
 
     @Before
     public void before_init() throws SQLException {
-//        dao.setDataSource(testDataSource());
-
         dao.createTable();
     }
-
-//    public DataSource testDataSource() {
-//        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-//        dataSource.setDriverClass(org.h2.Driver.class);
-//        dataSource.setUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
-//        dataSource.setUsername("test");
-//        dataSource.setPassword("1234");
-//        return dataSource;
-//    }
-
     @Test
     public void test_addAndGet() throws SQLException {
         dao.deleteAll();

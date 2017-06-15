@@ -1,6 +1,5 @@
 package com.tistory.tobyspring.dao;
 
-import com.tistory.tobyspring.dao.statement.DeleteAllStatement;
 import com.tistory.tobyspring.dao.statement.StatementStrategy;
 import com.tistory.tobyspring.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -26,20 +25,20 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
-    public void add(User user) throws SQLException {
-        Connection c = dataSource.getConnection();
+    public void add(final User user) throws SQLException {
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                PreparedStatement ps =
+                        c.prepareStatement("INSERT INTO USERS(id, name, password) VALUES (?, ?, ?)");
 
-        PreparedStatement ps = c.prepareStatement(
-                "INSERT INTO USERS(id, name, password) VALUES (?,?,?)"
-        );
-        ps.setString(1, user.getId());
-        ps.setString(2, user.getName());
-        ps.setString(3, user.getPassword());
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
 
-        ps.executeUpdate();
-
-        ps.close();
-        c.close();
+                return ps;
+            }
+        });
     }
 
     public User get(String id) throws SQLException {
@@ -70,8 +69,12 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        StatementStrategy stat = new DeleteAllStatement();
-        jdbcContextWithStatementStrategy(stat);
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                return c.prepareStatement("DELETE FROM USERS");
+            }
+        });
     }
 
     public int getCount() throws SQLException {
