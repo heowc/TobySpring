@@ -12,8 +12,13 @@
         <property name="password" value="test" />
     </bean>
 
+    <bean id="jdbcContext" class="com.tistory.tobyspring.dao.jdbc.JdbcContext">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
     <!-- @Bean userDao Method -->
     <bean id="userDao" class="com.tistory.tobyspring.dao.UserDao">
         <property name="dataSource" ref="dataSource"/>
+        <property name="jdbcContext" ref="jdbcContext"/>
     </bean>
 </beans>
