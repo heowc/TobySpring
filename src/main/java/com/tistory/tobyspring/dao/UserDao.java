@@ -68,14 +68,40 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        Connection c = dataSource.getConnection();
+        Connection c = null;
+        PreparedStatement ps = null;
 
-        PreparedStatement ps = c.prepareStatement("DELETE FROM USERS");
+        try {
+            c = dataSource.getConnection();
 
-        ps.executeUpdate();
+            ps = makeStatement(c);
 
-        ps.close();
-        c.close();
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            // Connection 객체 닫기
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    throw e;
+                }
+            }
+
+            // PrepareStatement 객체 닫기
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    private PreparedStatement makeStatement(Connection c) throws SQLException {
+        return c.prepareStatement("DELETE FROM USERS");
     }
 
     public int getCount() throws SQLException {
