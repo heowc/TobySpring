@@ -1,5 +1,7 @@
 package com.tistory.tobyspring.dao;
 
+import com.tistory.tobyspring.dao.statement.DeleteAllStatement;
+import com.tistory.tobyspring.dao.statement.StatementStrategy;
 import com.tistory.tobyspring.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -68,40 +70,8 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = dataSource.getConnection();
-
-            ps = makeStatement(c);
-
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        } finally {
-            // Connection 객체 닫기
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    throw e;
-                }
-            }
-
-            // PrepareStatement 객체 닫기
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    throw e;
-                }
-            }
-        }
-    }
-
-    private PreparedStatement makeStatement(Connection c) throws SQLException {
-        return c.prepareStatement("DELETE FROM USERS");
+        StatementStrategy stat = new DeleteAllStatement();
+        jdbcContextWithStatementStrategy(stat);
     }
 
     public int getCount() throws SQLException {
@@ -135,5 +105,26 @@ public class UserDao {
 
         ps.close();
         c.close();
+    }
+
+    public void jdbcContextWithStatementStrategy(StatementStrategy stat) throws SQLException {
+        Connection c = null;
+        PreparedStatement ps = null;
+
+        try {
+            c = dataSource.getConnection();
+
+            ps = stat.makePreparedStatement(c);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            // PrepareStatement 객체 닫기
+            if (ps != null) { try { ps.close(); } catch (SQLException e) {} }
+
+            // Connection 객체 닫기
+            if (c != null) { try { c.close(); } catch (SQLException e) {} }
+        }
     }
 }
