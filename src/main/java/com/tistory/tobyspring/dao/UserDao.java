@@ -17,44 +17,42 @@ public class UserDao {
 
     private JdbcTemplate jdbcTemplate;
 
+    private RowMapper<User> userMapper =
+                new RowMapper<User>() {
+                    @Override
+                    public User mapRow(ResultSet rs, int i) throws SQLException {
+                        return new User(rs.getString("id"),
+                                        rs.getString("name"),
+                                        rs.getString("password"));
+                    }
+                };
+
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-    
+
     public void add(final User user) throws SQLException {
-        jdbcTemplate.update("INSERT INTO USERS (id, name, password) VALUES (?, ?, ?)",
-                            user.getId(), user.getName(), user.getPassword());
+        jdbcTemplate
+            .update("INSERT INTO USERS (id, name, password) VALUES (?, ?, ?)",
+                    user.getId(), user.getName(), user.getPassword());
     }
 
     public User get(String id) throws SQLException {
         return jdbcTemplate
                 .queryForObject("SELECT * FROM USERS WHERE ID = ?",
-                                new Object[] {id},
-                                new RowMapper<User>() {
-                                    @Override
-                                    public User mapRow(ResultSet rs, int i) throws SQLException {
-                                        return new User(rs.getString("id"),
-                                                        rs.getString("name"),
-                                                        rs.getString("password"));
-                                    }
-                                });
+                                new Object[] { id },
+                                this.userMapper);
     }
 
     public List<User> getAll() throws SQLException {
         return jdbcTemplate
                 .query("SELECT * FROM USERS",
-                        new RowMapper<User>() {
-                            @Override
-                            public User mapRow(ResultSet rs, int i) throws SQLException {
-                                return new User(rs.getString("id"),
-                                        rs.getString("name"),
-                                        rs.getString("password"));
-                            }
-                        });
+                        this.userMapper);
     }
 
     public void deleteAll() throws SQLException {
-        jdbcTemplate.execute("DELETE FROM USERS");
+        jdbcTemplate
+            .execute("DELETE FROM USERS");
     }
 
     public int getCount() throws SQLException {
@@ -63,10 +61,11 @@ public class UserDao {
     }
 
     public void createTable() throws SQLException {
-        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS USERS ( " +
-                                "ID VARCHAR(10) PRIMARY KEY, " +
-                                "NAME VARCHAR(20) NOT NULL, " +
-                                "PASSWORD VARCHAR(10) NOT NULL " +
-                                ")");
+        jdbcTemplate
+            .execute("CREATE TABLE IF NOT EXISTS USERS ( " +
+                        "ID VARCHAR(10) PRIMARY KEY, " +
+                        "NAME VARCHAR(20) NOT NULL, " +
+                        "PASSWORD VARCHAR(10) NOT NULL " +
+                        ")");
     }
 }
