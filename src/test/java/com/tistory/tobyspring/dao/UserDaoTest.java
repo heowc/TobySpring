@@ -10,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -24,35 +25,31 @@ public class UserDaoTest {
     @Autowired
     private UserDao dao;
 
+    private User user1 = new User("wonchul", "허원철", "1234");;
+    private User user2 = new User("naeun", "전나은", "1234");
+    private User user3 = new User("toby", "이일민", "1234");
+
     @Before
     public void before_init() throws SQLException {
         dao.createTable();
     }
+
     @Test
     public void test_addAndGet() throws SQLException {
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
 
-        User user = new User();
-        user.setId("wonchul");
-        user.setName("허원철");
-        user.setPassword("1234");
-
-        dao.add(user);
+        dao.add(user1);
         assertThat(dao.getCount(), is(1));
 
-        User user2 = dao.get(user.getId());
+        user2 = dao.get(user1.getId());
 
-        assertThat(user.getName(), is(user2.getName()));
-        assertThat(user.getPassword(), is(user2.getPassword()));
+        assertThat(user1.getName(), is(user2.getName()));
+        assertThat(user1.getPassword(), is(user2.getPassword()));
     }
 
     @Test
     public void test_count() throws SQLException {
-        User user1 = new User("wonchul", "허원철", "1234");
-        User user2 = new User("naeun", "전나은", "1234");
-        User user3 = new User("toby", "이일민", "1234");
-
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
 
@@ -72,5 +69,34 @@ public class UserDaoTest {
         assertThat(dao.getCount(), is(0));
 
         dao.get("unknown_id"); // Incorrect result size: expected 1, actual 0
+    }
+
+    @Test
+    public void test_getAll() throws SQLException {
+        dao.deleteAll();
+
+        dao.add(user1);
+        List<User> userList1 = dao.getAll();
+        assertThat(userList1.size(), is(1));
+        checkSameUser(user1, userList1.get(0));
+
+        dao.add(user2);
+        List<User> userList2 = dao.getAll();
+        assertThat(userList2.size(), is(2));
+        checkSameUser(user1, userList2.get(0));
+        checkSameUser(user2, userList2.get(1));
+
+        dao.add(user3);
+        List<User> userList3 = dao.getAll();
+        assertThat(userList3.size(), is(3));
+        checkSameUser(user1, userList3.get(0));
+        checkSameUser(user2, userList3.get(1));
+        checkSameUser(user3, userList3.get(2));
+    }
+
+    private void checkSameUser(User user1, User user2) throws SQLException {
+        assertThat(user1.getId(), is(user2.getId()));
+        assertThat(user1.getName(), is(user2.getName()));
+        assertThat(user1.getPassword(), is(user2.getPassword()));
     }
 }
