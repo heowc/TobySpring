@@ -29,20 +29,37 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
-    public void add(final User user) throws SQLException {
+    /*
+        전략 패턴과 템플릿 패턴을 섞은 방식을 템플릿/콜백 패턴이라고 한다.
+     */
+    private void executeSql(final String query) throws SQLException {
         jdbcContext.workWithStatementStrategy(new StatementStrategy() {
             @Override
             public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-                PreparedStatement ps =
-                        c.prepareStatement("INSERT INTO USERS(id, name, password) VALUES (?, ?, ?)");
+                return c.prepareStatement(query);
+            }
+        });
+    }
 
-                ps.setString(1, user.getId());
-                ps.setString(2, user.getName());
-                ps.setString(3, user.getPassword());
+    private void executeSql(final String query, final String... value) throws SQLException {
+        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                PreparedStatement ps = c.prepareStatement(query);
+
+                int length = value.length;
+                for (int i = 0; i < length; i++) {
+                    ps.setString((i + 1), value[i]);
+                }
 
                 return ps;
             }
         });
+    }
+
+    public void add(final User user) throws SQLException {
+        executeSql("INSERT INTO USERS(id, name, password) VALUES (?, ?, ?)",
+                    user.getId(), user.getName(), user.getPassword());
     }
 
     public User get(String id) throws SQLException {
@@ -73,12 +90,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
-            @Override
-            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-                return c.prepareStatement("DELETE FROM USERS");
-            }
-        });
+        executeSql("DELETE FROM USERS");
     }
 
     public int getCount() throws SQLException {
@@ -98,19 +110,10 @@ public class UserDao {
     }
 
     public void createTable() throws SQLException {
-        Connection c = dataSource.getConnection();
-
-        PreparedStatement ps = c.prepareStatement(
-                "CREATE TABLE IF NOT EXISTS USERS ( " +
-                        "ID VARCHAR(10) PRIMARY KEY, " +
-                        "NAME VARCHAR(20) NOT NULL, " +
-                        "PASSWORD VARCHAR(10) NOT NULL " +
-                        ")"
-        );
-
-        ps.executeUpdate();
-
-        ps.close();
-        c.close();
+        executeSql("CREATE TABLE IF NOT EXISTS USERS ( " +
+                    "ID VARCHAR(10) PRIMARY KEY, " +
+                    "NAME VARCHAR(20) NOT NULL, " +
+                    "PASSWORD VARCHAR(10) NOT NULL " +
+                    ")");
     }
 }
