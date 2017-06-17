@@ -1,6 +1,7 @@
 package com.tistory.tobyspring.config;
 
 import com.tistory.tobyspring.dao.UserDao;
+import com.tistory.tobyspring.dao.UserDaoJdbc;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
@@ -16,7 +17,7 @@ public class DaoFactory {
      */
 //    @Bean
     public UserDao userDao() {
-        UserDao userDao = new UserDao();
+        UserDaoJdbc userDao = new UserDaoJdbc();
         userDao.setDataSource(dataSource());
         return userDao;
     }
