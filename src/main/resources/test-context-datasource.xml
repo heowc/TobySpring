@@ -16,4 +16,9 @@
     <bean id="userDao" class="com.tistory.tobyspring.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <!-- @Bean userService Method -->
+    <bean id="userService" class="com.tistory.tobyspring.service.impl.UserServiceImpl">
+        <property name="userDao" ref="userDao"/>
+    </bean>
 </beans>
