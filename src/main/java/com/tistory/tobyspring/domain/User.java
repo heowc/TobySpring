@@ -9,12 +9,19 @@ public class User {
     private String name;
     private String password;
 
+    private Level level;
+    private int loginCount;
+    private int recommendCount;
+
     public User() {}
 
-    public User(String id, String name, String password) {
+    public User(String id, String name, String password, Level level, int loginCount, int recommendCount) {
         this.id = id;
         this.name = name;
         this.password = password;
+        this.level = level;
+        this.loginCount = loginCount;
+        this.recommendCount = recommendCount;
     }
 
     public String getId() {
@@ -39,5 +46,29 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public int getLoginCount() {
+        return loginCount;
+    }
+
+    public void setLoginCount(int loginCount) {
+        this.loginCount = loginCount;
+    }
+
+    public int getRecommendCount() {
+        return recommendCount;
+    }
+
+    public void setRecommendCount(int recommendCount) {
+        this.recommendCount = recommendCount;
     }
 }

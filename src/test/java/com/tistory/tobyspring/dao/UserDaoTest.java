@@ -1,5 +1,6 @@
 package com.tistory.tobyspring.dao;
 
+import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,13 +35,17 @@ public class UserDaoTest {
     @Autowired
     private DataSource dataSource;
 
-    private User user1 = new User("wonchul", "허원철", "1234");
-    private User user2 = new User("naeun", "전나은", "1234");
-    private User user3 = new User("toby", "이일민", "1234");
+    private User user1;
+    private User user2;
+    private User user3;
 
     @Before
     public void before_init() throws SQLException {
         dao.createTable();
+
+        user1 = new User("wonchul", "허원철", "1234", Level.BASIC, 1, 0);
+        user2 = new User("naeun", "전나은", "1234", Level.SILVER, 55, 10);
+        user3 = new User("toby", "이일민", "1234", Level.GOLD, 100, 40);
     }
 
     @Test
@@ -53,8 +58,7 @@ public class UserDaoTest {
 
         user2 = dao.get(user1.getId());
 
-        assertThat(user1.getName(), is(user2.getName()));
-        assertThat(user1.getPassword(), is(user2.getPassword()));
+        checkSameUser(user1, user2);
     }
 
     @Test
@@ -107,6 +111,9 @@ public class UserDaoTest {
         assertThat(user1.getId(), is(user2.getId()));
         assertThat(user1.getName(), is(user2.getName()));
         assertThat(user1.getPassword(), is(user2.getPassword()));
+        assertThat(user1.getLevel(), is(user2.getLevel()));
+        assertThat(user1.getLoginCount(), is(user2.getLoginCount()));
+        assertThat(user1.getRecommendCount(), is(user2.getRecommendCount()));
     }
 
     @Test(expected = DataAccessException.class)

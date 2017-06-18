@@ -1,8 +1,7 @@
 package com.tistory.tobyspring.dao;
 
+import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
-import com.tistory.tobyspring.exception.DuplicateUserIdException;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -25,7 +24,10 @@ public class UserDaoJdbc implements UserDao{
                     public User mapRow(ResultSet rs, int i) throws SQLException {
                         return new User(rs.getString("id"),
                                         rs.getString("name"),
-                                        rs.getString("password"));
+                                        rs.getString("password"),
+                                        Level.valueOf(rs.getInt("level")),
+                                        rs.getInt("login_count"),
+                                        rs.getInt("recommend_count"));
                     }
                 };
 
@@ -36,8 +38,8 @@ public class UserDaoJdbc implements UserDao{
     @Override
     public void add(final User user) {
         jdbcTemplate
-                .update("INSERT INTO USERS (id, name, password) VALUES (?, ?, ?)",
-                        user.getId(), user.getName(), user.getPassword());
+                .update("INSERT INTO USERS (id, name, password, level, login_count, recommend_count) VALUES (?, ?, ?, ?, ?, ?)",
+                        user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount());
     }
 
     @Override
@@ -73,7 +75,10 @@ public class UserDaoJdbc implements UserDao{
             .execute("CREATE TABLE IF NOT EXISTS USERS ( " +
                         "ID VARCHAR(10) PRIMARY KEY, " +
                         "NAME VARCHAR(20) NOT NULL, " +
-                        "PASSWORD VARCHAR(10) NOT NULL " +
-                        ")");
+                        "PASSWORD VARCHAR(10) NOT NULL, " +
+                        "LEVEL SMALLINT, " +
+                        "LOGIN_COUNT INT, " +
+                        "RECOMMEND_COUNT INT " +
+                    ")");
     }
 }
