@@ -34,15 +34,10 @@ public class UserDaoJdbc implements UserDao{
     }
 
     @Override
-    public void add(final User user) throws DuplicateUserIdException {
-        try {
-            jdbcTemplate
-                    .update("INSERT INTO USERS (id, name, password) VALUES (?, ?, ?)",
-                            user.getId(), user.getName(), user.getPassword());
-        } catch (DataAccessException e) {
-            System.out.println(e.getMessage());
-            throw new DuplicateUserIdException(e);
-        }
+    public void add(final User user) {
+        jdbcTemplate
+                .update("INSERT INTO USERS (id, name, password) VALUES (?, ?, ?)",
+                        user.getId(), user.getName(), user.getPassword());
     }
 
     @Override
