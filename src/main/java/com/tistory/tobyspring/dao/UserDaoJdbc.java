@@ -14,7 +14,7 @@ import java.util.List;
  * DAO (Data Access Object) <BR>
  * 사용자 정보를 DB에 넣고 관리할 수 있는 클래스 <BR>
  */
-public class UserDaoJdbc implements UserDao{
+public class UserDaoJdbc implements UserDao {
 
     private JdbcTemplate jdbcTemplate;
 
@@ -38,7 +38,7 @@ public class UserDaoJdbc implements UserDao{
     @Override
     public void add(final User user) {
         jdbcTemplate
-                .update("INSERT INTO USERS (id, name, password, level, login_count, recommend_count) VALUES (?, ?, ?, ?, ?, ?)",
+                .update("INSERT INTO USERS (ID, NAME, PASSWORD, LEVEL, LOGIN_COUNT, RECOMMEND_COUNT) VALUES (?, ?, ?, ?, ?, ?)",
                         user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount());
     }
 
@@ -67,6 +67,19 @@ public class UserDaoJdbc implements UserDao{
     public int getCount() {
         return jdbcTemplate
                 .queryForInt("SELECT COUNT(*) FROM USERS");
+    }
+
+    @Override
+    public void update(User user) {
+        jdbcTemplate.update("UPDATE USERS SET " +
+                            "NAME = ? " +
+                            ", PASSWORD = ? " +
+                            ", LEVEL = ? " +
+                            ", LOGIN_COUNT = ? " +
+                            ", RECOMMEND_COUNT = ? " +
+                            "WHERE ID = ?",
+                user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount(),
+                user.getId());
     }
 
     @Override

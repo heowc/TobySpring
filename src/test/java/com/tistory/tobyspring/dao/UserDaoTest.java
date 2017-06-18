@@ -140,4 +140,24 @@ public class UserDaoTest {
                         isA(DataAccessException.class));
         }
     }
+
+    @Test
+    public void test_update() throws SQLException {
+        dao.deleteAll();
+
+        dao.add(user1);
+        dao.add(user2);
+
+        user1.setName("HeoWonChul");
+        user1.setPassword("1111");
+        user1.setLevel(Level.GOLD);
+        user1.setLoginCount(123);
+        user1.setRecommendCount(50);
+        dao.update(user1);
+
+        User user1Update = dao.get(user1.getId());
+        checkSameUser(user1, user1Update);
+        User user2Same = dao.get(user2.getId());
+        checkSameUser(user2, user2Same);
+    }
 }
