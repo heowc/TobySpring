@@ -49,4 +49,10 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
+
+    @Override
+    public void add(User user) {
+        if(user.getLevel() == null) user.setLevel(Level.BASIC);
+        userDao.add(user);
+    }
 }
