@@ -72,23 +72,12 @@ public class User {
         this.recommendCount = recommendCount;
     }
 
-    public boolean isUpgradeBasic() {
-        return (level == Level.BASIC) && loginCount >= 50;
-    }
-
-    public boolean isUpgradeSliver() {
-        return (level == Level.SILVER) && recommendCount >= 30;
-    }
-
-    public boolean isBasic() {
-        return level == Level.BASIC;
-    }
-
-    public boolean isSliver() {
-        return level == Level.SILVER;
-    }
-
-    public boolean isGold() {
-        return level == Level.GOLD;
+    public void upgradeLevel() {
+        Level nextLevel = level.nextLevel();
+        if (nextLevel != null) {
+            level = nextLevel;
+        } else {
+            throw new IllegalStateException(level + "은 업그레이드가 불가능 합니다.");
+        }
     }
 }

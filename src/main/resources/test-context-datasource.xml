@@ -18,7 +18,13 @@
     </bean>
 
     <!-- @Bean userService Method -->
-    <bean id="userService" class="com.tistory.tobyspring.service.impl.UserServiceImpl">
+    <bean id="userService" class="com.tistory.tobyspring.service.impl.SimpleUserService">
+        <property name="userDao" ref="userDao"/>
+        <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy"/>
+    </bean>
+
+    <!-- @Bean userService Method -->
+    <bean id="userLevelUpgradePolicy" class="com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy">
         <property name="userDao" ref="userDao"/>
     </bean>
 </beans>
