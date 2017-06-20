@@ -4,8 +4,8 @@ import com.tistory.tobyspring.dao.UserDao;
 import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.exception.TestUserLevelUpgradePolicyException;
-import com.tistory.tobyspring.service.impl.SimpleUserService;
 import com.tistory.tobyspring.service.test.TestUserLevelUpgradePolicy;
+import com.tistory.tobyspring.service.test.TestUserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +26,9 @@ import static org.junit.Assert.fail;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-context-datasource.xml")
 public class UserServiceTest {
+
+    @Autowired
+    private DataSource dataSource;
 
     @Autowired
     private UserService userService;
@@ -48,7 +52,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void upgradeLevels() {
+    public void upgradeLevels() throws Exception {
         userDao.deleteAll();
 
         for (User user : userList) {
@@ -113,16 +117,21 @@ public class UserServiceTest {
      *
      *     c.close();
      * </pre>
+     *
+     * => 트랜잭션 동기화 방식
+     * (트랜잭션을 시작하기 위해 만든 Connection을 특별한 저장소에 보관해두고, 이후에 저장된 Connection을 가져다가 사용하는 것)
      */
-    @Test(expected = AssertionError.class)
-    public void upgradeAllOrNothing() {
-        SimpleUserService userService = new SimpleUserService();
-        userService.setUserDao(userDao);
+    @Test
+    public void upgradeAllOrNothing() throws Exception {
+        TestUserService testUserService = new TestUserService();
 
         TestUserLevelUpgradePolicy userLevelUpgradePolicy =
                 new TestUserLevelUpgradePolicy(userList.get(3).getId());
         userLevelUpgradePolicy.setUserDao(userDao);
-        userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy);
+
+        testUserService.setUserDao(userDao);
+        testUserService.setDataSource(dataSource);
+        testUserService.setUserLevelUpgradePolicy(userLevelUpgradePolicy);
 
         userDao.deleteAll();
 
@@ -131,7 +140,7 @@ public class UserServiceTest {
         }
 
         try {
-            userService.upgradeLevels();
+            testUserService.upgradeLevels();
             fail("TestUserLevelUpgradePolicyException expected");
         } catch (TestUserLevelUpgradePolicyException e) {
         }
