@@ -5,11 +5,10 @@ import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.service.UserLevelUpgradePolicy;
 import com.tistory.tobyspring.service.UserService;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -18,12 +17,13 @@ import java.util.List;
  */
 public class TestUserService implements UserService {
 
-    private DataSource dataSource;
+    private PlatformTransactionManager transactionManager;
+
     private UserDao userDao;
     private UserLevelUpgradePolicy userLevelUpgradePolicy;
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     public void setUserDao(UserDao userDao) {
@@ -35,10 +35,9 @@ public class TestUserService implements UserService {
     }
 
     @Override
-    public void upgradeLevels() throws Exception {
-        TransactionSynchronizationManager.initSynchronization();    // 트랜잭션 동기화 초기화
-        Connection c = DataSourceUtils.getConnection(dataSource);   // DB Connection 생성
-        c.setAutoCommit(false);                                     // 트랜잭션 시작
+    public void upgradeLevels() {
+        TransactionStatus status =
+                transactionManager.getTransaction(new DefaultTransactionDefinition()); // 트랜잭션 시작
 
         try {
             List<User> userList = userDao.getAll();
@@ -49,14 +48,10 @@ public class TestUserService implements UserService {
                 }
             }
 
-            c.commit(); // 트랜잭션 커밋
-        } catch (Exception e) {
-            c.rollback(); // 트랜잭션 롤백
+            transactionManager.commit(status); // 트랜잭션 커밋
+        } catch (RuntimeException e) {
+            transactionManager.rollback(status); // 트랜잭션 롤백
             throw e;
-        } finally {
-            DataSourceUtils.releaseConnection(c, dataSource);               // DB Connection 닫음
-            TransactionSynchronizationManager.unbindResource(dataSource);   // 트랜잭션 동기화 닫기
-            TransactionSynchronizationManager.clearSynchronization();       // 트랜잭션 동기화 종료
         }
     }
 

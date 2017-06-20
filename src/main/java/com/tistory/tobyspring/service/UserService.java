@@ -4,6 +4,6 @@ import com.tistory.tobyspring.domain.User;
 
 public interface UserService {
 
-    void upgradeLevels() throws Exception;
+    void upgradeLevels();
     void add(User user);
 }
