@@ -3,6 +3,9 @@ package com.tistory.tobyspring.service;
 import com.tistory.tobyspring.dao.UserDao;
 import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
+import com.tistory.tobyspring.exception.TestUserLevelUpgradePolicyException;
+import com.tistory.tobyspring.service.impl.SimpleUserService;
+import com.tistory.tobyspring.service.test.TestUserLevelUpgradePolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +20,7 @@ import static com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy.M
 import static com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy.MIN_RECOMMENDCOUNT_FOR_GOLD;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-context-datasource.xml")
@@ -85,5 +89,53 @@ public class UserServiceTest {
 
         assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
         assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));
+    }
+
+    /**
+     * 트랜잭션 문제 발생 </BR>
+     * <pre>
+     *     Connection c = dataSource.getConnection();
+     *
+     *     c.setAutoCommit(false); // 트랜잭션 시작
+     *     try {
+     *         PrepareStatement st1 =
+     *              c.prepareStatement("update users ...");
+     *         st1.executeUpdate();
+     *
+     *         PrepareStatement st2 =
+     *              c.prepareStatement("delete users ...");
+     *         st2.executeUpdate();
+     *
+     *         c.commit(); // 트랜잭션 커밋
+     *     } catch(Exception e) {
+     *         c.rollback(); // 트랜잭션 롤백
+     *     }
+     *
+     *     c.close();
+     * </pre>
+     */
+    @Test(expected = AssertionError.class)
+    public void upgradeAllOrNothing() {
+        SimpleUserService userService = new SimpleUserService();
+        userService.setUserDao(userDao);
+
+        TestUserLevelUpgradePolicy userLevelUpgradePolicy =
+                new TestUserLevelUpgradePolicy(userList.get(3).getId());
+        userLevelUpgradePolicy.setUserDao(userDao);
+        userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy);
+
+        userDao.deleteAll();
+
+        for (User user: userList) {
+            userDao.add(user);
+        }
+
+        try {
+            userService.upgradeLevels();
+            fail("TestUserLevelUpgradePolicyException expected");
+        } catch (TestUserLevelUpgradePolicyException e) {
+        }
+
+        checkLevelUpgraded(userList.get(1), false);
     }
 }
