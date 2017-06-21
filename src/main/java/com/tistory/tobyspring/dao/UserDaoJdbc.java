@@ -27,7 +27,8 @@ public class UserDaoJdbc implements UserDao {
                                         rs.getString("password"),
                                         Level.valueOf(rs.getInt("level")),
                                         rs.getInt("login_count"),
-                                        rs.getInt("recommend_count"));
+                                        rs.getInt("recommend_count"),
+                                        rs.getString("email"));
                     }
                 };
 
@@ -38,8 +39,8 @@ public class UserDaoJdbc implements UserDao {
     @Override
     public void add(final User user) {
         jdbcTemplate
-                .update("INSERT INTO USERS (ID, NAME, PASSWORD, LEVEL, LOGIN_COUNT, RECOMMEND_COUNT) VALUES (?, ?, ?, ?, ?, ?)",
-                        user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount());
+                .update("INSERT INTO USERS (ID, NAME, PASSWORD, LEVEL, LOGIN_COUNT, RECOMMEND_COUNT, EMAIL) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount(), user.getEmail());
     }
 
     @Override
@@ -77,8 +78,9 @@ public class UserDaoJdbc implements UserDao {
                             ", LEVEL = ? " +
                             ", LOGIN_COUNT = ? " +
                             ", RECOMMEND_COUNT = ? " +
+                            ", EMAIL = ? " +
                             "WHERE ID = ?",
-                user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount(),
+                user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount(), user.getEmail(),
                 user.getId());
     }
 
@@ -91,7 +93,8 @@ public class UserDaoJdbc implements UserDao {
                         "PASSWORD VARCHAR(10) NOT NULL, " +
                         "LEVEL SMALLINT, " +
                         "LOGIN_COUNT INT, " +
-                        "RECOMMEND_COUNT INT " +
+                        "RECOMMEND_COUNT INT, " +
+                        "EMAIL VARCHAR(30) " +
                     ")");
     }
 }

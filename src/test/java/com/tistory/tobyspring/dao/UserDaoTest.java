@@ -43,9 +43,9 @@ public class UserDaoTest {
     public void before_init() throws SQLException {
         dao.createTable();
 
-        user1 = new User("wonchul", "허원철", "1234", Level.BASIC, 1, 0);
-        user2 = new User("naeun", "전나은", "1234", Level.SILVER, 55, 10);
-        user3 = new User("toby", "이일민", "1234", Level.GOLD, 100, 40);
+        user1 = new User("wonchul", "허원철", "1234", Level.BASIC, 1, 0, "heowc1992@gmail.com");
+        user2 = new User("naeun", "전나은", "1234", Level.SILVER, 55, 10, "heowc1992@gmail.com");
+        user3 = new User("toby", "이일민", "1234", Level.GOLD, 100, 40, "heowc1992@gmail.com");
     }
 
     @Test
@@ -114,6 +114,7 @@ public class UserDaoTest {
         assertThat(user1.getLevel(), is(user2.getLevel()));
         assertThat(user1.getLoginCount(), is(user2.getLoginCount()));
         assertThat(user1.getRecommendCount(), is(user2.getRecommendCount()));
+        assertThat(user1.getEmail(), is(user2.getEmail()));
     }
 
     @Test(expected = DataAccessException.class)

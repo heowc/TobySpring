@@ -13,15 +13,21 @@ public class User {
     private int loginCount;
     private int recommendCount;
 
+    private String email;
+
     public User() {}
 
-    public User(String id, String name, String password, Level level, int loginCount, int recommendCount) {
+    public User(String id, String name, String password,
+                Level level, int loginCount, int recommendCount,
+                String email) {
+
         this.id = id;
         this.name = name;
         this.password = password;
         this.level = level;
         this.loginCount = loginCount;
         this.recommendCount = recommendCount;
+        this.email = email;
     }
 
     public String getId() {
@@ -70,6 +76,14 @@ public class User {
 
     public void setRecommendCount(int recommendCount) {
         this.recommendCount = recommendCount;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void upgradeLevel() {

@@ -5,6 +5,9 @@ import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.service.UserLevelUpgradePolicy;
 import com.tistory.tobyspring.service.UserService;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.List;
 
@@ -14,8 +17,13 @@ import java.util.List;
  */
 public class SimpleUserService implements UserService {
 
+    private PlatformTransactionManager transactionManager;
     private UserDao userDao;
     private UserLevelUpgradePolicy userLevelUpgradePolicy;
+
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
@@ -27,12 +35,22 @@ public class SimpleUserService implements UserService {
 
     @Override
     public void upgradeLevels() {
-        List<User> userList = userDao.getAll();
+        TransactionStatus status =
+                transactionManager.getTransaction(new DefaultTransactionDefinition()); // 트랜잭션 시작
 
-        for (User user : userList) {
-            if (userLevelUpgradePolicy.isUpgradeLevel(user)) {
-                userLevelUpgradePolicy.upgradeLevel(user);
+        try {
+            List<User> userList = userDao.getAll();
+
+            for (User user : userList) {
+                if (userLevelUpgradePolicy.isUpgradeLevel(user)) {
+                    userLevelUpgradePolicy.upgradeLevel(user);
+                }
             }
+
+            transactionManager.commit(status); // 트랜잭션 커밋
+        } catch (RuntimeException e) {
+            transactionManager.rollback(status); // 트랜잭션 롤백
+            throw e;
         }
     }
 

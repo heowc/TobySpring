@@ -4,15 +4,12 @@ import com.tistory.tobyspring.dao.UserDao;
 import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.exception.TestUserLevelUpgradePolicyException;
-import com.tistory.tobyspring.service.test.TestUserLevelUpgradePolicy;
-import com.tistory.tobyspring.service.test.TestUserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,9 +25,6 @@ import static org.junit.Assert.fail;
 public class UserServiceTest {
 
     @Autowired
-    private PlatformTransactionManager transactionManager; // 트랜잭션 추상화
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -43,15 +37,15 @@ public class UserServiceTest {
         userDao.createTable();
 
         userList = Arrays.asList(
-            new User("bunjin", "박범진", "p1", Level.BASIC, MIN_LOGINCOUNT_FOR_SLIVER-1, 8),
-            new User("joytouch", "강명성", "p2", Level.BASIC, MIN_LOGINCOUNT_FOR_SLIVER, 8),
-            new User("erwins", "신승한", "p3", Level.SILVER, 60, MIN_RECOMMENDCOUNT_FOR_GOLD-1),
-            new User("madnite1", "이상호", "p4", Level.SILVER, 60, MIN_RECOMMENDCOUNT_FOR_GOLD),
-            new User("green", "오민규", "p5", Level.GOLD, 100, Integer.MAX_VALUE)
+            new User("bunjin", "박범진", "p1", Level.BASIC, MIN_LOGINCOUNT_FOR_SLIVER-1, 8, "heowc1992@gmail.com"),
+            new User("joytouch", "강명성", "p2", Level.BASIC, MIN_LOGINCOUNT_FOR_SLIVER, 8, "heowc1992@gmail.com"),
+            new User("erwins", "신승한", "p3", Level.SILVER, 60, MIN_RECOMMENDCOUNT_FOR_GOLD-1, "heowc1992@gmail.com"),
+            new User("madnite1", "이상호", "p4", Level.SILVER, 60, MIN_RECOMMENDCOUNT_FOR_GOLD, "heowc1992@gmail.com"),
+            new User("green", "오민규", "p5", Level.GOLD, 100, Integer.MAX_VALUE, "heowc1992@gmail.com")
         );
     }
 
-    @Test
+    @Test(expected = TestUserLevelUpgradePolicyException.class)
     public void upgradeLevels() throws Exception {
         userDao.deleteAll();
 
@@ -64,7 +58,7 @@ public class UserServiceTest {
         checkLevelUpgraded(userList.get(0), false);
         checkLevelUpgraded(userList.get(1), true);
         checkLevelUpgraded(userList.get(2), false);
-        checkLevelUpgraded(userList.get(3), true);
+        checkLevelUpgraded(userList.get(3), true); // TestUserLevelUpgradePolicyException
         checkLevelUpgraded(userList.get(4), false);
     }
 
@@ -123,16 +117,6 @@ public class UserServiceTest {
      */
     @Test
     public void upgradeAllOrNothing() throws Exception {
-        TestUserService testUserService = new TestUserService();
-
-        TestUserLevelUpgradePolicy userLevelUpgradePolicy =
-                new TestUserLevelUpgradePolicy(userList.get(3).getId());
-        userLevelUpgradePolicy.setUserDao(userDao);
-
-        testUserService.setTransactionManager(transactionManager);
-        testUserService.setUserDao(userDao);
-        testUserService.setUserLevelUpgradePolicy(userLevelUpgradePolicy);
-
         userDao.deleteAll();
 
         for (User user: userList) {
@@ -140,7 +124,7 @@ public class UserServiceTest {
         }
 
         try {
-            testUserService.upgradeLevels();
+            userService.upgradeLevels();
             fail("TestUserLevelUpgradePolicyException expected");
         } catch (TestUserLevelUpgradePolicyException e) {
         }

@@ -60,3 +60,4 @@ fabric.properties
 /.idea/
 tobyspring.iml
 target/
+/src/main/resources/properties/mail.properties

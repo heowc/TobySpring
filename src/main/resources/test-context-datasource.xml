@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- DaoFactory 클래스 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation=
+               "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- @Bean dataSource Method -->
+    <!-- mail.properties 읽기(보안상 올리지 않습니다.) -->
+    <util:properties id="mail" location="properties/mail.properties"/>
+
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver" />
         <property name="url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" />
@@ -12,27 +16,39 @@
         <property name="password" value="test" />
     </bean>
 
-    <!-- @Bean userDao Method -->
     <bean id="userDao" class="com.tistory.tobyspring.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <!-- @Bean userService Method -->
-    <bean id="userService" class="com.tistory.tobyspring.service.impl.SimpleUserService">
+    <bean id="userService" class="com.tistory.tobyspring.service.test.TestUserService">
+        <property name="transactionManager" ref="transactionManager"/>
         <property name="userDao" ref="userDao"/>
         <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy"/>
     </bean>
 
-    <!-- @Bean userService Method -->
-    <bean id="userLevelUpgradePolicy" class="com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy">
+    <bean id="userLevelUpgradePolicy" class="com.tistory.tobyspring.service.test.TestUserLevelUpgradePolicy" >
+        <constructor-arg name="id" value="madnite1"/>
         <property name="userDao" ref="userDao"/>
+        <property name="mailSender" ref="mailSender"/>
     </bean>
 
-    <!-- jdbc 트랜잭션 오브젝트 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <!-- jta 트랜잭션 오브젝트 -->
-    <!--<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"/>-->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="#{mail['mail.host']}"/>
+        <property name="port" value="#{mail['mail.port']}"/>
+        <property name="username" value="#{mail['mail.username']}"/>
+        <property name="password" value="#{mail['mail.password']}"/>
+        <property name="javaMailProperties" ref="mailProperties"/>
+    </bean>
+
+    <bean id="mailProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+            </props>
+        </property>
+    </bean>
 </beans>

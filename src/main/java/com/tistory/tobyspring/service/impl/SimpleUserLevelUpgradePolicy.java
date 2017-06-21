@@ -5,6 +5,8 @@ import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.service.UserLevelUpgradePolicy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 
 /**
  * Service <BR>
@@ -20,8 +22,15 @@ public class SimpleUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private MailSender mailSender;
+
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
+    }
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
     }
 
     @Override
@@ -39,5 +48,16 @@ public class SimpleUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
     public void upgradeLevel(User user) {
         user.upgradeLevel();
         userDao.update(user);
+        sendUpgradeMail(user);
+    }
+
+    private void sendUpgradeMail(User user) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setFrom("heowc1992@gmail.com");
+        mailMessage.setSubject("Upgrade 안내");
+        mailMessage.setText(String.format("사용자의 등급이 %s(으)로 승격 되었습니다.", user.getLevel().name()));
+
+        mailSender.send(mailMessage);
     }
 }
