@@ -16,7 +16,7 @@ public class UserTest {
     }
 
     @Test
-    public void upgradeLevel() {
+    public void test_upgradeLevel() {
         Level [] levels = Level.values();
 
         for(Level level : levels) {
@@ -28,7 +28,7 @@ public class UserTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void notUpgradeLevel() {
+    public void test_notUpgradeLevel() {
         Level [] levels = Level.values();
 
         for(Level level : levels) {

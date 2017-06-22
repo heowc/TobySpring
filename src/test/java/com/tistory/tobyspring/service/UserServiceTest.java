@@ -4,10 +4,15 @@ import com.tistory.tobyspring.dao.UserDao;
 import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.exception.TestUserLevelUpgradePolicyException;
+import com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy;
+import com.tistory.tobyspring.service.impl.SimpleUserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -19,6 +24,7 @@ import static com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy.M
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-context-datasource.xml")
@@ -45,21 +51,47 @@ public class UserServiceTest {
         );
     }
 
-    @Test(expected = TestUserLevelUpgradePolicyException.class)
-    public void upgradeLevels() throws Exception {
-        userDao.deleteAll();
+    /**
+     * * 인터페이스를 이용하여 생성 <BR>
+     * * 리턴할 값이 있으면 이를 지정해준다. 또한 예외를 강제로 던질 수도 있다. <BR>
+     * * 테스트 대상 오브젝트에 DI를 이용하여 Mock 오브젝트를 사용하도록 한다. <BR>
+     * * 특정 메소드가 호출 됐는지, 어떤 값을 가지고 몇번 호출 됐는지 검증한다. <BR>
+     */
+    @Test
+    public void test_upgradeLevels() throws Exception {
+        SimpleUserService userService = new SimpleUserService();
+        SimpleUserLevelUpgradePolicy userLevelUpgradePolicy = new SimpleUserLevelUpgradePolicy();
 
-        for (User user : userList) {
-            userDao.add(user);
-        }
+        // Mock UserDao 생성
+        UserDao mockUserDao = mock(UserDao.class);
+        // getAll()에 스텁 기능 추가
+        when(mockUserDao.getAll()).thenReturn(userList);
+
+        // Mock MailSender 생성
+        MailSender mockMailSender = mock(MailSender.class);
+        userLevelUpgradePolicy.setMailSender(mockMailSender);
+        userLevelUpgradePolicy.setUserDao(mockUserDao);
+
+        userService.setUserDao(mockUserDao);
+        userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy);
 
         userService.upgradeLevels();
 
-        checkLevelUpgraded(userList.get(0), false);
-        checkLevelUpgraded(userList.get(1), true);
-        checkLevelUpgraded(userList.get(2), false);
-        checkLevelUpgraded(userList.get(3), true); // TestUserLevelUpgradePolicyException
-        checkLevelUpgraded(userList.get(4), false);
+        // update(User user) 2번 호출하는지 확인
+        verify(mockUserDao, times(2)).update(any(User.class));
+        verify(mockUserDao).update(userList.get(1));
+        assertThat(userList.get(1).getLevel(), is(Level.SILVER));
+        verify(mockUserDao).update(userList.get(3));
+        assertThat(userList.get(3).getLevel(), is(Level.GOLD));
+
+        // ArgumentCaptor를 이용하여 실제 MailSender Mock 오브젝트에 전달된 파라미터를 가져와 검증
+        // 파라미터를 직접 비교하기보다는 파라미터의 내부 정보를 확인해야 하는 경우
+        ArgumentCaptor<SimpleMailMessage> mailMessageArg
+                = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mockMailSender, times(2)).send(mailMessageArg.capture());
+        List<SimpleMailMessage> mailMessageList = mailMessageArg.getAllValues();
+        assertThat(mailMessageList.get(0).getTo()[0], is(userList.get(1).getEmail()));
+        assertThat(mailMessageList.get(1).getTo()[0], is(userList.get(3).getEmail()));
     }
 
     private void checkLevelUpgraded(User user, boolean isUpgraded) {
@@ -72,7 +104,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void add() {
+    public void test_add() {
         userDao.deleteAll();
 
         User userWithLevel = userList.get(4);       // GOLD LEVEL
@@ -116,7 +148,7 @@ public class UserServiceTest {
      * (트랜잭션을 시작하기 위해 만든 Connection을 특별한 저장소에 보관해두고, 이후에 저장된 Connection을 가져다가 사용하는 것)
      */
     @Test
-    public void upgradeAllOrNothing() throws Exception {
+    public void test_upgradeAllOrNothing() throws Exception {
         userDao.deleteAll();
 
         for (User user: userList) {
