@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation=
-               "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-
-    <!-- mail.properties 읽기(보안상 올리지 않습니다.) -->
-    <util:properties id="mail" location="properties/mail.properties"/>
+               "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver" />
@@ -20,8 +15,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="userService" class="com.tistory.tobyspring.service.test.TestUserService">
-        <property name="transactionManager" ref="transactionManager"/>
+    <bean id="testUserService" class="com.tistory.tobyspring.service.test.TestUserService">
         <property name="userDao" ref="userDao"/>
         <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy"/>
     </bean>
@@ -30,6 +24,11 @@
         <constructor-arg name="id" value="madnite1"/>
         <property name="userDao" ref="userDao"/>
         <property name="mailSender" ref="mailSender"/>
+    </bean>
+
+    <bean id="userService" class="com.tistory.tobyspring.service.impl.TransactionUserService">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="userService" ref="testUserService"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

@@ -20,8 +20,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="userService" class="com.tistory.tobyspring.service.impl.SimpleUserService">
-        <property name="transactionManager" ref="transactionManager"/>
+    <bean id="simpleUserService" class="com.tistory.tobyspring.service.impl.SimpleUserService">
         <property name="userDao" ref="userDao"/>
         <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy"/>
     </bean>
@@ -29,6 +28,11 @@
     <bean id="userLevelUpgradePolicy" class="com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy">
         <property name="userDao" ref="userDao"/>
         <property name="mailSender" ref="mailSender"/>
+    </bean>
+
+    <bean id="userService" class="com.tistory.tobyspring.service.impl.TransactionUserService">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="userService" ref="simpleUserService"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
