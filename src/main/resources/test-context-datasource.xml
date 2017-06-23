@@ -15,7 +15,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="testUserService" class="com.tistory.tobyspring.service.test.TestUserService">
+    <bean id="userService" class="com.tistory.tobyspring.service.test.TestUserService">
         <property name="userDao" ref="userDao"/>
         <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy"/>
     </bean>
@@ -24,11 +24,6 @@
         <constructor-arg name="id" value="madnite1"/>
         <property name="userDao" ref="userDao"/>
         <property name="mailSender" ref="mailSender"/>
-    </bean>
-
-    <bean id="userService" class="com.tistory.tobyspring.service.impl.TransactionUserService">
-        <property name="transactionManager" ref="transactionManager"/>
-        <property name="userService" ref="testUserService"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
