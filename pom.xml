@@ -43,9 +43,9 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>${javax.activation.version}</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
@@ -53,7 +53,6 @@
             <artifactId>mail</artifactId>
             <version>${javax.mail.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>cglib</groupId>
@@ -87,7 +86,6 @@
             <version>${mock.version}</version>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 
