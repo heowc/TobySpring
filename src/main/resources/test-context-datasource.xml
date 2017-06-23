@@ -32,4 +32,7 @@
 
     <bean id="mailSender" class="com.tistory.tobyspring.service.test.DummyMailSender"/>
 
+    <bean id="message" class="com.tistory.tobyspring.factorybean.MessageFactoryBean">
+        <property name="text" value="Factory Bean"/>
+    </bean>
 </beans>
