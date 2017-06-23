@@ -30,9 +30,11 @@
         <property name="mailSender" ref="mailSender"/>
     </bean>
 
-    <bean id="userService" class="com.tistory.tobyspring.service.impl.TransactionUserService">
-        <property name="transactionManager" ref="transactionManager"/>
-        <property name="userService" ref="simpleUserService"/>
+    <bean id="userService" class="com.tistory.tobyspring.service.TransactionProxyFactoryBean">
+        <property name="target" ref="simpleUserService"/>
+         <property name="transactionManager" ref="transactionManager"/>
+        <property name="pattern" value="upgradeLevels"/>
+        <property name="serviceInterface" value="com.tistory.tobyspring.service.UserService"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
