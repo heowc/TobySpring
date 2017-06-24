@@ -9,14 +9,12 @@ public class TestUserLevelUpgradePolicy extends SimpleUserLevelUpgradePolicy {
 
     private final String id;
 
-    private MailSender mailSender;
-
     public TestUserLevelUpgradePolicy(String id) {
         this.id = id;
     }
 
     public void setMailSender(MailSender mailSender) {
-        this.mailSender = mailSender;
+        super.setMailSender(mailSender);
     }
 
     @Override

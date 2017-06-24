@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation=
-               "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+               "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- mail.properties 읽기(보안상 올리지 않습니다.) -->
+    <util:properties id="mail" location="properties/mail.properties"/>
+
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver" />
@@ -26,16 +32,33 @@
         <property name="mailSender" ref="mailSender"/>
     </bean>
 
-    <bean id="userService" class="com.tistory.tobyspring.service.TransactionProxyFactoryBean">
+    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target" ref="testUserService"/>
+        <property name="interceptorNames">
+            <list>
+                <value>transactionAdvisor</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="transactionAdvice" class="com.tistory.tobyspring.service.TransactionAdvice">
         <property name="transactionManager" ref="transactionManager"/>
-        <property name="pattern" value="upgradeLevels"/>
-        <property name="serviceInterface" value="com.tistory.tobyspring.service.UserService"/>
+    </bean>
+
+    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+        <property name="mappedName" value="upgrade*"/>
+    </bean>
+
+    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+        <property name="advice" ref="transactionAdvice"/>
+        <property name="pointcut" ref="transactionPointcut"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <bean id="mailSender" class="com.tistory.tobyspring.service.test.DummyMailSender"/>
 
     <bean id="message" class="com.tistory.tobyspring.factorybean.MessageFactoryBean">
         <property name="text" value="Factory Bean"/>
