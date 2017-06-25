@@ -20,7 +20,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="simpleUserService" class="com.tistory.tobyspring.service.impl.SimpleUserService">
+    <bean id="userService" class="com.tistory.tobyspring.service.impl.SimpleUserService">
         <property name="userDao" ref="userDao"/>
         <property name="userLevelUpgradePolicy" ref="userLevelUpgradePolicy"/>
     </bean>
@@ -30,21 +30,17 @@
         <property name="mailSender" ref="mailSender"/>
     </bean>
 
-    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="target" ref="simpleUserService"/>
-        <property name="interceptorNames">
-            <list>
-                <value>transactionAdvisor</value>
-            </list>
-        </property>
-    </bean>
+    <!-- 자동 프록시 생성기 - Advisor 인터페이스로 구현된 클래스를 모두 찾음 -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
-    <bean id="transactionAdvice" class="com.tistory.tobyspring.service.TransactionAdvice">
-        <property name="transactionManager" ref="transactionManager"/>
-    </bean>
-
-    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+    <!-- 클래스명와 메소드명으로 포인트컷 등록 -->
+    <bean id="transactionPointcut" class="com.tistory.tobyspring.aop.NameMatchClassMethodPointcut">
+        <property name="mappedClassName" value="SimpleUserService*"/>
         <property name="mappedName" value="upgrade*"/>
+    </bean>
+
+    <bean id="transactionAdvice" class="com.tistory.tobyspring.aop.TransactionAdvice">
+        <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
     <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">

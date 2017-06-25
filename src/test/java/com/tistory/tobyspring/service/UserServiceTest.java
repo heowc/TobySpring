@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailSender;
@@ -164,13 +163,8 @@ public class UserServiceTest {
             userDao.add(user);
         }
 
-        ProxyFactoryBean proxyFactoryBean =
-                context.getBean("&userService", ProxyFactoryBean.class);
-
-        UserService txUserService = (UserService) proxyFactoryBean.getObject();
-
         try {
-            txUserService.upgradeLevels();
+            userService.upgradeLevels();
             fail("TestUserLevelUpgradePolicyException expected");
         } catch (TestUserLevelUpgradePolicyException e) {
         }

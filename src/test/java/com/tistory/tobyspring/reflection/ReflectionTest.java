@@ -1,6 +1,8 @@
 package com.tistory.tobyspring.reflection;
 
 import org.junit.Test;
+import org.springframework.aop.ClassFilter;
+import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
@@ -102,5 +104,47 @@ public class ReflectionTest {
         assertThat(hello.sayHello("WonChul"), is("HELLO WONCHUL"));
         assertThat(hello.sayHi("WonChul"), is("HI WONCHUL"));
         assertThat(hello.sayThankYou("WonChul"), is("Thank You WonChul")); // toUppercase() 안됨
+    }
+
+    @Test
+    public void test_advisorAndClassNamePointcut() {
+        // 포인트컷 준비
+        NameMatchMethodPointcut classMethodPointcut = new NameMatchMethodPointcut() {
+            @Override
+            public ClassFilter getClassFilter() {
+                return new ClassFilter() {
+                    @Override
+                    public boolean matches(Class<?> clazz) {
+                        return clazz.getSimpleName().startsWith("HelloW");
+                    }
+                };
+            }
+        };
+        classMethodPointcut.setMappedName("sayH*");
+
+        checkAdviced(new HelloTarget(), classMethodPointcut, false);
+
+        class HelloWorld extends HelloTarget {}
+        checkAdviced(new HelloWorld(), classMethodPointcut, true);
+
+        class HelloWonchul extends HelloTarget {}
+        checkAdviced(new HelloWonchul(), classMethodPointcut, true);
+    }
+
+    private void checkAdviced(Object target, Pointcut pointcut, boolean isAdviced) {
+        ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
+        proxyFactoryBean.setTarget(target); // 타겟 설정
+        proxyFactoryBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice())); // 어드바이저 설정
+        Hello hello = (Hello) proxyFactoryBean.getObject(); // 생성된 프록스 초기화
+
+        if (isAdviced) {
+            assertThat(hello.sayHello("WonChul"), is("HELLO WONCHUL"));
+            assertThat(hello.sayHi("WonChul"), is("HI WONCHUL"));
+            assertThat(hello.sayThankYou("WonChul"), is("Thank You WonChul"));
+        } else {
+            assertThat(hello.sayHello("WonChul"), is("Hello WonChul"));
+            assertThat(hello.sayHi("WonChul"), is("Hi WonChul"));
+            assertThat(hello.sayThankYou("WonChul"), is("Thank You WonChul"));
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.tistory.tobyspring.service;
+package com.tistory.tobyspring.aop;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
