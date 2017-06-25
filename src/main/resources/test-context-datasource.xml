@@ -36,7 +36,7 @@
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
     <!-- 클래스명와 메소드명으로 포인트컷 등록 -->
-    <bean id="transactionPointcut" class="com.tistory.tobyspring.aop.NameMatchClassMethodPointcut">
+    <bean id="transactionPointcut" class="com.tistory.tobyspring.aop.pointcut.NameMatchClassMethodPointcut">
         <property name="mappedClassName" value="TestUserService*"/>
         <property name="mappedName" value="upgrade*"/>
     </bean>

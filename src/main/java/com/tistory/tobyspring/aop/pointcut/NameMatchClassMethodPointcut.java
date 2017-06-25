@@ -1,4 +1,4 @@
-package com.tistory.tobyspring.aop;
+package com.tistory.tobyspring.aop.pointcut;
 
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.support.NameMatchMethodPointcut;
