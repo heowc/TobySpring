@@ -17,29 +17,43 @@ import static org.junit.Assert.assertThat;
 public class AspectjTest {
 
     @Test
-    public void methodSignaturePointcut() throws SecurityException, NoSuchMethodException {
+    public void test_methodSignaturePointcut() throws Exception {
+        String expression =
+                "execution(" +
+                        "public int com.tistory.tobyspring.aop.pointcut.test.Target.minus(int, int) " +
+                        "throws java.lang.RuntimeException"
+                        + ")";
+
+        pointcutMatches(expression, true, Target.class, "minus", int.class, int.class);
+        pointcutMatches(expression, false, Target.class, "plus", int.class, int.class);
+        pointcutMatches(expression, false, Bean.class, "method");
+    }
+
+    @Test
+    public void test_targetClassPointcutMatches() throws Exception {
+        String expression =
+                "execution(" +
+                        "* *(..)" +
+                         ")";
+
+        pointcutMatches(expression, true, Target.class, "hello");
+        pointcutMatches(expression, true, Target.class, "hello", String.class);
+        pointcutMatches(expression, true, Target.class, "plus", int.class, int.class);
+        pointcutMatches(expression, true, Target.class, "minus", int.class, int.class);
+        pointcutMatches(expression, true, Target.class, "method");
+        pointcutMatches(expression, true, Bean.class, "method");
+    }
+
+    private void pointcutMatches(String expression, Boolean isExpected, Class<?> clazz,
+                                 String methodName, Class<?>... args) throws Exception {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("execution(" +
-                "public int com.tistory.tobyspring.aop.pointcut.test.Target.minus(int, int) " +
-                "throws java.lang.RuntimeException"
-               + ")");
+        pointcut.setExpression(expression);
 
-        assertThat(pointcut.getClassFilter().matches(Target.class) &&
-                    pointcut.getMethodMatcher().matches(
-                            Target.class.getMethod("minus", int.class, int.class), null
-                    ),
-                    is(true));
 
-        assertThat(pointcut.getClassFilter().matches(Target.class) &&
+        assertThat(pointcut.getClassFilter().matches(clazz) &&
                         pointcut.getMethodMatcher().matches(
-                                Target.class.getMethod("plus", int.class, int.class), null
+                                clazz.getMethod(methodName, args), null
                         ),
-                    is(false));
-
-        assertThat(pointcut.getClassFilter().matches(Bean.class) &&
-                        pointcut.getMethodMatcher().matches(
-                                Target.class.getMethod("method"), null
-                        ),
-                    is(false));
+                    is(isExpected));
     }
 }

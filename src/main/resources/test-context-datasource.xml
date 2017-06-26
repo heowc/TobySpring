@@ -35,10 +35,9 @@
     <!-- 빈 후 처리기 - Advisor 인터페이스로 구현된 클래스를 모두 찾음 -->
     <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
-    <!-- 클래스명와 메소드명으로 포인트컷 등록 -->
-    <bean id="transactionPointcut" class="com.tistory.tobyspring.aop.pointcut.NameMatchClassMethodPointcut">
-        <property name="mappedClassName" value="TestUserService*"/>
-        <property name="mappedName" value="upgrade*"/>
+    <!-- AspectJExpressionPointcut 빈 등록 -->
+    <bean id="transactionPointcut" class="org.springframework.aop.aspectj.AspectJExpressionPointcut">
+        <property name="expression" value="execution(* *..TestUserService*.upgrade*(..))*"/>
     </bean>
 
     <bean id="transactionAdvice" class="com.tistory.tobyspring.aop.TransactionAdvice">
