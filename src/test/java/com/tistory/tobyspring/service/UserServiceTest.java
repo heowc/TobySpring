@@ -29,7 +29,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test-context-datasource.xml")
+@ContextConfiguration(locations = {"/test-datasource-context.xml", "/aop-context.xml"})
 public class UserServiceTest {
 
     @Autowired

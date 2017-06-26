@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat;
 // JUnit이 테스트를 진행하는 중에 테스트에 사용할 어플리케이션 컨텍스트를 만들고 관리하는 작업을 진행
 @RunWith(SpringJUnit4ClassRunner.class)
 // 자동으로 만들어줄 어플리케이션 컨텍스트의 설정 파일 위치 지정
-@ContextConfiguration(locations = "/test-context-datasource.xml")
+@ContextConfiguration(locations = "/test-datasource-context.xml")
 // @DirtiesContext // 해당 레벨(클래스, 메소드)에 해당하는 컨텍스트 구성이나 상태를 변경
 public class UserDaoTest {
 
