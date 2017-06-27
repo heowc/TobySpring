@@ -7,10 +7,6 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <bean id="transactionAdvice" class="com.tistory.tobyspring.aop.TransactionAdvice">
-        <property name="transactionManager" ref="transactionManager"/>
-    </bean>
-
     <aop:config>
         <aop:pointcut id="transactionPointcut"
                       expression="execution(* *..*UserService*.upgrade*(..))" />
