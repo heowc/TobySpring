@@ -7,14 +7,23 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+    <!--
+        !) 주의사항
+        클라이언트으로 부터 호출된 타겟 오브젝트이어야 프록시가 적용된다.
+        반대로, 자기 자신의 메소드를 호출할 때는 프록시가 적용되지 않는다.
+
+        => AspectJ 방식으로 적용 가능
+    -->
     <aop:config>
+        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)" />
+        <!--
         <aop:pointcut id="transactionPointcut"
                       expression="execution(* *..*UserService*.upgrade*(..))" />
 
         <aop:advisor advice-ref="transactionAdvice"
                      pointcut-ref="transactionPointcut" />
 
-        <!--
+
         <aop:advisor advice-ref="transactionAdvice"
                      pointcut="execution(* *..*UserService*.upgrade*(..))" />
         -->

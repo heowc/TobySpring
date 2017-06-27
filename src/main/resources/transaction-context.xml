@@ -8,6 +8,10 @@
                            http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <!--
+        트랜잭션 경계를 서비스 계층으로 했다면, 다른 계층이나 모듈에서 DAO에 직접 접근하는 것을 차단해야 한다.
+    -->
+
+    <!--
         Transaction Advice는 TransactionInterceptor를 이용
         * PROPAGATION_{name} : 트랜잭션 전파 방식
         * ISOLATION_{name} : 격리 수준
@@ -28,11 +32,10 @@
     </bean>
     -->
 
-    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+    <tx:advice id="transactionAdvice">
         <tx:attributes>
-            <tx:method name="get*" propagation="REQUIRED" read-only="true" timeout="30"/>
-            <tx:method name="upgrade*" propagation="REQUIRES_NEW" isolation="SERIALIZABLE"/>
-            <tx:method name="*" propagation="REQUIRED"/>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*"/>
         </tx:attributes>
     </tx:advice>
 </beans>

@@ -173,4 +173,10 @@ public class UserServiceTest {
 
         checkLevelUpgraded(userList.get(1), false);
     }
+
+    // JDBC 드라이버에 따라 다르다.
+    @Test
+    public void test_readOnlyTransactionGetAll() {
+        userService.getAll();
+    }
 }
