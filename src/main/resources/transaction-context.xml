@@ -32,10 +32,25 @@
     </bean>
     -->
 
+    <!--
+        @Transactional을 이용한 트랜잭션 적용
+        * 메소드, 클래스, 인터페이스에 사용
+        * 애노테이션이 부여된 모든 오브젝트는 자동으로 타겟 오브젝트로 인식
+        * 포인트컷 : TransactionAttributeSourcePointcut
+        * 어드바이스 : AnnotationTransactionAttributeSource
+        * 클래스의 메소드 → 클래스 → 인터페이스의 메소드 → 인터페이스순으로 찾음
+
+    -->
+
+    <!-- @Transactional 활성화 -->
+    <tx:annotation-driven />
+
+    <!--
     <tx:advice id="transactionAdvice">
         <tx:attributes>
             <tx:method name="get*" read-only="true"/>
             <tx:method name="*"/>
         </tx:attributes>
     </tx:advice>
+    -->
 </beans>

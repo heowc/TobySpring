@@ -14,9 +14,10 @@
 
         => AspectJ 방식으로 적용 가능
     -->
+    <!--
     <aop:config>
         <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)" />
-        <!--
+
         <aop:pointcut id="transactionPointcut"
                       expression="execution(* *..*UserService*.upgrade*(..))" />
 
@@ -26,6 +27,7 @@
 
         <aop:advisor advice-ref="transactionAdvice"
                      pointcut="execution(* *..*UserService*.upgrade*(..))" />
-        -->
+
     </aop:config>
+    -->
 </beans>
