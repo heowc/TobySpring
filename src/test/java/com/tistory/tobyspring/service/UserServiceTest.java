@@ -32,6 +32,8 @@ import static org.mockito.Mockito.*;
 @ContextConfiguration(locations = {"/test-datasource-context.xml",
                                     "/aop-context.xml",
                                     "/transaction-context.xml"})
+//@Transactional
+//@TransactionConfiguration(defaultRollback = false) // 클래스레벨에서의 롤백
 public class UserServiceTest {
 
     @Autowired
@@ -178,5 +180,22 @@ public class UserServiceTest {
     @Test
     public void test_readOnlyTransactionGetAll() {
         userService.getAll();
+    }
+
+    @Test
+//    @Transactional
+//    @Rollback(false)  // 테스트 환경에서는 자동 롤백이 되기 때문에,
+                        // 메소드 레벨에서 데이터를 반영하고 싶다면 value값을 false로 수정
+    public void test_transactionSync() {
+//        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+//        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+//        txDefinition.setReadOnly(true);
+
+        userService.deleteAll();
+
+        userService.add(userList.get(0));
+        userService.add(userList.get(1));
+
+//        transactionManager.commit(txStatus);
     }
 }
