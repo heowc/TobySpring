@@ -1,5 +1,6 @@
 package com.tistory.tobyspring.dao;
 
+import com.tistory.tobyspring.dao.sql.SqlService;
 import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +19,7 @@ public class UserDaoJdbc implements UserDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    private String sqlAdd;
+    private SqlService sqlService;
 
     private RowMapper<User> userMapper =
                 new RowMapper<User>() {
@@ -38,21 +39,21 @@ public class UserDaoJdbc implements UserDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public void setSqlAdd(String sqlAdd) {
-        this.sqlAdd = sqlAdd;
+    public void setSqlService(SqlService sqlService) {
+        this.sqlService = sqlService;
     }
 
     @Override
     public void add(final User user) {
         jdbcTemplate
-                .update(sqlAdd,
+                .update(sqlService.getSql("userAdd"),
                         user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount(), user.getEmail());
     }
 
     @Override
     public User get(String id) {
         return jdbcTemplate
-                .queryForObject("SELECT * FROM USERS WHERE ID = ?",
+                .queryForObject(sqlService.getSql("userGet"),
                                 new Object[] { id },
                                 this.userMapper);
     }
@@ -60,32 +61,25 @@ public class UserDaoJdbc implements UserDao {
     @Override
     public List<User> getAll() {
         return jdbcTemplate
-                .query("SELECT * FROM USERS",
+                .query(sqlService.getSql("userGetAll"),
                         this.userMapper);
     }
 
     @Override
     public void deleteAll() {
         jdbcTemplate
-            .execute("DELETE FROM USERS");
+            .execute(sqlService.getSql("userDeleteAll"));
     }
 
     @Override
     public int getCount() {
         return jdbcTemplate
-                .queryForInt("SELECT COUNT(*) FROM USERS");
+                .queryForInt(sqlService.getSql("userGetCount"));
     }
 
     @Override
     public void update(User user) {
-        jdbcTemplate.update("UPDATE USERS SET " +
-                            "NAME = ? " +
-                            ", PASSWORD = ? " +
-                            ", LEVEL = ? " +
-                            ", LOGIN_COUNT = ? " +
-                            ", RECOMMEND_COUNT = ? " +
-                            ", EMAIL = ? " +
-                            "WHERE ID = ?",
+        jdbcTemplate.update(sqlService.getSql("userUpdate"),
                 user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount(), user.getEmail(),
                 user.getId());
     }
@@ -93,14 +87,6 @@ public class UserDaoJdbc implements UserDao {
     @Override
     public void createTable() {
         jdbcTemplate
-            .execute("CREATE TABLE IF NOT EXISTS USERS ( " +
-                        "ID VARCHAR(10) PRIMARY KEY, " +
-                        "NAME VARCHAR(20) NOT NULL, " +
-                        "PASSWORD VARCHAR(10) NOT NULL, " +
-                        "LEVEL SMALLINT, " +
-                        "LOGIN_COUNT INT, " +
-                        "RECOMMEND_COUNT INT, " +
-                        "EMAIL VARCHAR(30) " +
-                    ")");
+            .execute(sqlService.getSql("userCreateTable"));
     }
 }
