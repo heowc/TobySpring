@@ -18,6 +18,8 @@ public class UserDaoJdbc implements UserDao {
 
     private JdbcTemplate jdbcTemplate;
 
+    private String sqlAdd;
+
     private RowMapper<User> userMapper =
                 new RowMapper<User>() {
                     @Override
@@ -36,10 +38,14 @@ public class UserDaoJdbc implements UserDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    public void setSqlAdd(String sqlAdd) {
+        this.sqlAdd = sqlAdd;
+    }
+
     @Override
     public void add(final User user) {
         jdbcTemplate
-                .update("INSERT INTO USERS (ID, NAME, PASSWORD, LEVEL, LOGIN_COUNT, RECOMMEND_COUNT, EMAIL) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                .update(sqlAdd,
                         user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLoginCount(), user.getRecommendCount(), user.getEmail());
     }
 

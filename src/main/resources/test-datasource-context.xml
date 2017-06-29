@@ -19,6 +19,9 @@
 
     <bean id="userDao" class="com.tistory.tobyspring.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
+        <property name="sqlAdd"
+                  value="INSERT INTO USERS (ID, NAME, PASSWORD, LEVEL, LOGIN_COUNT, RECOMMEND_COUNT, EMAIL)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?)"/>
     </bean>
 
     <bean id="testUserService" class="com.tistory.tobyspring.service.test.TestUserService">
