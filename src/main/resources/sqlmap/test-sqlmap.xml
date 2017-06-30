@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqlmap xmlns="http://www.epril.com/sqlmap"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.epril.com/sqlmap http://www.epril.com/sqlmap/sqlmap.xsd">
+    <!--
+        언마샬링 : XML 문서를 읽어서 자바의 오브젝트로 변환하는 것
+    -->
+    <sql key="add">insert</sql>
+    <sql key="get">select</sql>
+    <sql key="delete">delete</sql>
+
+</sqlmap>

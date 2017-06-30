@@ -1,12 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sqlmap xmlns="http://www.epril.com/sqlmap"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.epril.com/sqlmap http://www.epril.com.sqlmap/sqlmap.xsd">
-    <!--
-        언마샬링 : XML 문서를 읽어서 자바의 오브젝트로 변환하는 것
-    -->
-    <sql key="add">insert</sql>
-    <sql key="get">select</sql>
-    <sql key="delete">delete</sql>
+        xsi:schemaLocation="http://www.epril.com/sqlmap http://www.epril.com/sqlmap/sqlmap.xsd">
+    <sql key="userAdd">
+        INSERT INTO USERS (ID, NAME, PASSWORD, LEVEL, LOGIN_COUNT, RECOMMEND_COUNT, EMAIL)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    </sql>
+    <sql key="userGet">
+        SELECT * FROM USERS WHERE ID = ?
+    </sql>
+    <sql key="userGetAll">
+        SELECT * FROM USERS
+    </sql>
+    <sql key="userDeleteAll">
+        DELETE FROM USERS
+    </sql>
+    <sql key="userGetCount">
+        SELECT COUNT(*) FROM USERS
+    </sql>
+    <sql key="userUpdate">
+        UPDATE USERS SET
+        NAME = ?,
+        PASSWORD = ?,
+        LEVEL = ?,
+        LOGIN_COUNT = ?,
+        RECOMMEND_COUNT = ?,
+        EMAIL = ?
+        WHERE ID = ?
+    </sql>
+    <sql key="userCreateTable">
+        CREATE TABLE IF NOT EXISTS USERS (
+            ID VARCHAR(10) PRIMARY KEY,
+            NAME VARCHAR(20) NOT NULL,
+            PASSWORD VARCHAR(10) NOT NULL,
+            LEVEL SMALLINT,
+            LOGIN_COUNT INT,
+            RECOMMEND_COUNT INT,
+            EMAIL VARCHAR(30)
+        )
+    </sql>
 
 </sqlmap>

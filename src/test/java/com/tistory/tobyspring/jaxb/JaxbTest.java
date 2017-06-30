@@ -7,7 +7,6 @@ import org.junit.Test;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -23,9 +22,8 @@ public class JaxbTest {
 
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
-        // getClass.getRecourceAsStream("sqlmap.xml") 이 되지 않아 절대 경로로 잡음
         Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(
-                new FileInputStream("{absolute path}/TobySpring/target/classes/sqlmap/sqlmap.xml")
+                getClass().getResource("/sqlmap/test-sqlmap.xml")
         );
 
         List<SqlType> sqlList = sqlmap.getSql();
