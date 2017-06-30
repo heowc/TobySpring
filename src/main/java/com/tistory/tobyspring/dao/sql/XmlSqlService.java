@@ -4,6 +4,7 @@ import com.tistory.tobyspring.dao.xml.jaxb.SqlType;
 import com.tistory.tobyspring.dao.xml.jaxb.Sqlmap;
 import org.h2.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -14,7 +15,14 @@ public class XmlSqlService implements SqlService {
 
     private Map<String, String> sqlMap = new HashMap<>();
 
-    public XmlSqlService() {
+    private String sqlmapFile;
+
+    public void setSqlmapFile(String sqlmapFile) {
+        this.sqlmapFile = sqlmapFile;
+    }
+
+    @PostConstruct // 빈의 초기화 메소드로 지정
+    public void loadSql() {
         String contextPath = Sqlmap.class.getPackage().getName();
 
         try {
@@ -23,7 +31,7 @@ public class XmlSqlService implements SqlService {
             Unmarshaller unmarshaller = context.createUnmarshaller();
 
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(
-                    getClass().getResource("/sqlmap/sqlmap.xml")
+                    getClass().getResource(sqlmapFile) // /sqlmap/sqlmap.xml
             );
 
             for (SqlType sql : sqlmap.getSql()) {

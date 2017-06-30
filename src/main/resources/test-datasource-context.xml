@@ -2,13 +2,17 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation=
                "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!-- mail.properties 읽기(보안상 올리지 않습니다.) -->
     <util:properties id="mail" location="properties/mail.properties"/>
 
+    <!-- 코드의 애노테이션을 이용하여 부가적인 빈 설정 -->
+    <context:annotation-config />
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver" />
@@ -17,7 +21,9 @@
         <property name="password" value="test" />
     </bean>
 
-    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.XmlSqlService"/>
+    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.XmlSqlService">
+        <property name="sqlmapFile" value="/sqlmap/sqlmap.xml"/>
+    </bean>
 
     <bean id="userDao" class="com.tistory.tobyspring.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
