@@ -21,12 +21,19 @@
         <property name="password" value="test" />
     </bean>
 
-    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.XmlSqlService">
-        <property name="sqlmapFile" value="/sqlmap/sqlmap.xml"/>
-        <property name="sqlReader" ref="sqlService"/>
-        <property name="sqlRegistry" ref="sqlService"/>
+    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.DefaultSqlService"/>
+<!--
+    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.BaseSqlService">
+        <property name="sqlReader" ref="sqlReader"/>
+        <property name="sqlRegistry" ref="sqlRegistry"/>
     </bean>
 
+    <bean id="sqlReader" class="com.tistory.tobyspring.dao.sql.JaxbSqlReader">
+        <property name="sqlmapFile" value="/sqlmap/sqlmap.xml"/>
+    </bean>
+
+    <bean id="sqlRegistry" class="com.tistory.tobyspring.dao.sql.HashMapSqlRegistry"/>
+-->
     <bean id="userDao" class="com.tistory.tobyspring.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
         <property name="sqlService" ref="sqlService"/>
