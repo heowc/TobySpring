@@ -23,6 +23,8 @@
 
     <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.XmlSqlService">
         <property name="sqlmapFile" value="/sqlmap/sqlmap.xml"/>
+        <property name="sqlReader" ref="sqlService"/>
+        <property name="sqlRegistry" ref="sqlService"/>
     </bean>
 
     <bean id="userDao" class="com.tistory.tobyspring.dao.UserDaoJdbc">
