@@ -21,7 +21,23 @@
         <property name="password" value="test" />
     </bean>
 
-    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.DefaultSqlService"/>
+    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.OxmSqlService">
+        <property name="unmarshaller" ref="unmarshaller"/>
+    </bean>
+
+    <!--
+        OXM 추상화 제공
+    -->
+    <bean id="unmarshaller" class="org.springframework.oxm.castor.CastorMarshaller">
+        <property name="mappingLocation"
+                  value="sqlmap/mapping.xml"/>
+    </bean>
+<!--
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="com.tistory.tobyspring.dao.xml.jaxb"/>
+    </bean>
+-->
+
 <!--
     <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.BaseSqlService">
         <property name="sqlReader" ref="sqlReader"/>
@@ -59,4 +75,5 @@
     <bean id="message" class="com.tistory.tobyspring.factorybean.MessageFactoryBean">
         <property name="text" value="Factory Bean"/>
     </bean>
+
 </beans>

@@ -21,7 +21,14 @@
         <property name="password" value="test" />
     </bean>
 
-    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.DefaultSqlService"/>
+    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.OxmSqlService">
+        <property name="unmarshaller" ref="unmarshaller"/>
+    </bean>
+
+    <bean id="unmarshaller" class="org.springframework.oxm.castor.CastorMarshaller">
+        <property name="mappingLocation"
+                  value="sqlmap/mapping.xml"/>
+    </bean>
 
     <bean id="userService" class="com.tistory.tobyspring.service.impl.SimpleUserService">
         <property name="userDao" ref="userDao"/>
