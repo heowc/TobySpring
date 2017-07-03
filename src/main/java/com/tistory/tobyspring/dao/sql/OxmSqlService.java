@@ -2,6 +2,8 @@ package com.tistory.tobyspring.dao.sql;
 
 import com.tistory.tobyspring.dao.xml.jaxb.SqlType;
 import com.tistory.tobyspring.dao.xml.jaxb.Sqlmap;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 
 import javax.annotation.PostConstruct;
@@ -23,8 +25,8 @@ public class OxmSqlService implements SqlService {
         oxmSqlReader.setUnmarshaller(unmarshaller);
     }
 
-    public void setSqlmapFile(String sqlmapFile) {
-        oxmSqlReader.setSqlmapFile(sqlmapFile);
+    public void setSqlmap(Resource sqlmap) {
+        oxmSqlReader.setSqlmap(sqlmap);
     }
 
     @PostConstruct
@@ -41,21 +43,21 @@ public class OxmSqlService implements SqlService {
 
         private Unmarshaller unmarshaller;
 
-        private String sqlmapFile;
+        private Resource sqlmap = new ClassPathResource("sqlmap/sqlmap.xml");
 
         public void setUnmarshaller(Unmarshaller unmarshaller) {
             this.unmarshaller = unmarshaller;
         }
 
-        public void setSqlmapFile(String sqlmapFile) {
-            this.sqlmapFile = sqlmapFile;
+        public void setSqlmap(Resource sqlmap) {
+            this.sqlmap = sqlmap;
         }
 
         @Override
         public void read(SqlRegistry sqlRegistry) {
             try {
                 Source xmlSource = new StreamSource(
-                        getClass().getResource("/sqlmap/sqlmap.xml").openStream()
+                    sqlmap.getInputStream()
                 );
 
                 Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(xmlSource);
@@ -64,7 +66,8 @@ public class OxmSqlService implements SqlService {
                     sqlRegistry.registerSql(sql.getKey(), sql.getValue());
                 }
             } catch (IOException e) {
-                throw new IllegalArgumentException(sqlmapFile + "에 대한 AFile을 찾을 수 없습니다.");
+                throw new IllegalArgumentException(sqlmap.getFilename() +
+                                                    "에 대한 AFile을 찾을 수 없습니다.");
             }
         }
     }

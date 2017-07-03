@@ -23,6 +23,13 @@
 
     <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"/>
+        <!--
+        <property name="sqlmap" value="classpath:sqlmap/sqlmap.xml"/>
+
+        classpath: ~~~ : 클래스 패스 루트
+        file: ~~~      : 파일 시스템 루트
+        http:// ~~~    : http 프로토콜 이용
+        -->
     </bean>
 
     <!--
@@ -38,18 +45,6 @@
     </bean>
 -->
 
-<!--
-    <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.BaseSqlService">
-        <property name="sqlReader" ref="sqlReader"/>
-        <property name="sqlRegistry" ref="sqlRegistry"/>
-    </bean>
-
-    <bean id="sqlReader" class="com.tistory.tobyspring.dao.sql.JaxbSqlReader">
-        <property name="sqlmapFile" value="/sqlmap/sqlmap.xml"/>
-    </bean>
-
-    <bean id="sqlRegistry" class="com.tistory.tobyspring.dao.sql.HashMapSqlRegistry"/>
--->
     <bean id="userDao" class="com.tistory.tobyspring.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
         <property name="sqlService" ref="sqlService"/>

@@ -23,6 +23,7 @@
 
     <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"/>
+        <!--<property name="sqlmap" value="classpath:sqlmap/sqlmap.xml"/>-->
     </bean>
 
     <bean id="unmarshaller" class="org.springframework.oxm.castor.CastorMarshaller">
