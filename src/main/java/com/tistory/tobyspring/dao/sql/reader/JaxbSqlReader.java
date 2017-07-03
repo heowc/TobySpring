@@ -1,5 +1,6 @@
-package com.tistory.tobyspring.dao.sql;
+package com.tistory.tobyspring.dao.sql.reader;
 
+import com.tistory.tobyspring.dao.sql.registry.SqlRegistry;
 import com.tistory.tobyspring.dao.xml.jaxb.SqlType;
 import com.tistory.tobyspring.dao.xml.jaxb.Sqlmap;
 

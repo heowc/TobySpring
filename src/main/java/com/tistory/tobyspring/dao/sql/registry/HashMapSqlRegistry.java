@@ -1,4 +1,4 @@
-package com.tistory.tobyspring.dao.sql;
+package com.tistory.tobyspring.dao.sql.registry;
 
 import org.h2.util.StringUtils;
 

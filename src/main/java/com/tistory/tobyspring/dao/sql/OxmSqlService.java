@@ -1,5 +1,8 @@
 package com.tistory.tobyspring.dao.sql;
 
+import com.tistory.tobyspring.dao.sql.reader.SqlReader;
+import com.tistory.tobyspring.dao.sql.registry.HashMapSqlRegistry;
+import com.tistory.tobyspring.dao.sql.registry.SqlRegistry;
 import com.tistory.tobyspring.dao.xml.jaxb.SqlType;
 import com.tistory.tobyspring.dao.xml.jaxb.Sqlmap;
 import org.springframework.core.io.ClassPathResource;
