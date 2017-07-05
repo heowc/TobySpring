@@ -24,11 +24,19 @@
     <bean id="sqlService" class="com.tistory.tobyspring.dao.sql.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller"/>
         <!--<property name="sqlmap" value="classpath:sqlmap/sqlmap.xml"/>-->
+        <property name="sqlRegistry" ref="sqlRegistry"/>
     </bean>
 
     <bean id="unmarshaller" class="org.springframework.oxm.castor.CastorMarshaller">
         <property name="mappingLocation"
                   value="sqlmap/mapping.xml"/>
+    </bean>
+
+    <bean id="sqlRegistry" class="com.tistory.tobyspring.dao.sql.registry.ConcurrentHashMapSqlRegistry"/>
+
+    <bean id="userDao" class="com.tistory.tobyspring.dao.UserDaoJdbc">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="sqlService" ref="sqlService"/>
     </bean>
 
     <bean id="userService" class="com.tistory.tobyspring.service.impl.SimpleUserService">

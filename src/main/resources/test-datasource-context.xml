@@ -30,6 +30,7 @@
         file: ~~~      : 파일 시스템 루트
         http:// ~~~    : http 프로토콜 이용
         -->
+        <property name="sqlRegistry" ref="sqlRegistry"/>
     </bean>
 
     <!--
@@ -44,6 +45,8 @@
         <property name="contextPath" value="com.tistory.tobyspring.dao.xml.jaxb"/>
     </bean>
 -->
+
+    <bean id="sqlRegistry" class="com.tistory.tobyspring.dao.sql.registry.ConcurrentHashMapSqlRegistry"/>
 
     <bean id="userDao" class="com.tistory.tobyspring.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
