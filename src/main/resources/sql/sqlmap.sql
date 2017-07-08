@@ -1,0 +1,4 @@
+CREATE TABLE SQLMAP (
+    KEY_ VARCHAR2(100) PRIMARY KEY          ,
+    SQL_ VARCHAR2(100)              NOT NULL
+);
