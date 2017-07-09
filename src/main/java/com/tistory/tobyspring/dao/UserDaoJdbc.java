@@ -3,6 +3,7 @@ package com.tistory.tobyspring.dao;
 import com.tistory.tobyspring.dao.sql.SqlService;
 import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -35,10 +36,12 @@ public class UserDaoJdbc implements UserDao {
                     }
                 };
 
+    @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    @Autowired
     public void setSqlService(SqlService sqlService) {
         this.sqlService = sqlService;
     }

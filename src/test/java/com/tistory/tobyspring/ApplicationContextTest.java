@@ -1,5 +1,6 @@
 package com.tistory.tobyspring;
 
+import com.tistory.tobyspring.config.TestApplicationContext;
 import com.tistory.tobyspring.dao.UserDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +15,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test-datasource-context.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 public class ApplicationContextTest {
 
     @Autowired ApplicationContext context;

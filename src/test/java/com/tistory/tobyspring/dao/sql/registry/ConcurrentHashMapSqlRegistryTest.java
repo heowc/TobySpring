@@ -7,3 +7,4 @@ public class ConcurrentHashMapSqlRegistryTest extends AbstractSqlRegistryTest {
         return new ConcurrentHashMapSqlRegistry();
     }
 }
+

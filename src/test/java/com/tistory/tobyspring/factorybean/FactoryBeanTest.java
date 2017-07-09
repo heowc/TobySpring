@@ -1,5 +1,6 @@
 package com.tistory.tobyspring.factorybean;
 
+import com.tistory.tobyspring.config.TestApplicationContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test-datasource-context.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 public class FactoryBeanTest {
 
     @Autowired

@@ -1,5 +1,6 @@
 package com.tistory.tobyspring.service;
 
+import com.tistory.tobyspring.config.TestApplicationContext;
 import com.tistory.tobyspring.dao.UserDao;
 import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
@@ -29,9 +30,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/test-datasource-context.xml",
-                                    "/aop-context.xml",
-                                    "/transaction-context.xml"})
+@ContextConfiguration(classes = TestApplicationContext.class)
 //@Transactional
 //@TransactionConfiguration(defaultRollback = false) // 클래스레벨에서의 롤백
 public class UserServiceTest {
