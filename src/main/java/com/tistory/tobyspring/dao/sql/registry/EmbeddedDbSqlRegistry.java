@@ -2,16 +2,24 @@ package com.tistory.tobyspring.dao.sql.registry;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.util.Map;
 
 public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
 
-    SimpleJdbcTemplate template;
+    private SimpleJdbcTemplate template;
+    private TransactionTemplate transactionTemplate;
 
     public void setDataSource(DataSource dataSource) {
         template = new SimpleJdbcTemplate(dataSource);
+        transactionTemplate = new TransactionTemplate(
+                new DataSourceTransactionManager(dataSource)
+        );
     }
 
     @Override
@@ -39,8 +47,13 @@ public class EmbeddedDbSqlRegistry implements UpdatableSqlRegistry {
 
     @Override
     public void updateSql(Map<String, String> sqlmap) {
-        for(Map.Entry<String, String> entry : sqlmap.entrySet()) {
-            updateSql(entry.getKey(), entry.getValue());
-        }
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                for(Map.Entry<String, String> entry : sqlmap.entrySet()) {
+                    updateSql(entry.getKey(), entry.getValue());
+                }
+            }
+        });
     }
 }
