@@ -74,7 +74,7 @@ public class OxmSqlService implements SqlService {
                 }
             } catch (IOException e) {
                 throw new IllegalArgumentException(sqlmap.getFilename() +
-                                                    "에 대한 AFile을 찾을 수 없습니다.");
+                                                    "에 대한 File을 찾을 수 없습니다.");
             }
         }
     }
