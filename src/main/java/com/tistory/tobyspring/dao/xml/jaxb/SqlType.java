@@ -1,8 +1,8 @@
 //
-// ÀÌ ÆÄÀÏÀº JAXB(JavaTM Architecture for XML Binding) ÂüÁ¶ ±¸Çö 2.2.8-b130911.1802 ¹öÀüÀ» ÅëÇØ »ı¼ºµÇ¾ú½À´Ï´Ù. 
-// <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>¸¦ ÂüÁ¶ÇÏ½Ê½Ã¿À. 
-// ÀÌ ÆÄÀÏÀ» ¼öÁ¤ÇÏ¸é ¼Ò½º ½ºÅ°¸¶¸¦ ÀçÄÄÆÄÀÏÇÒ ¶§ ¼öÁ¤ »çÇ×ÀÌ ¼Õ½ÇµË´Ï´Ù. 
-// »ı¼º ³¯Â¥: 2017.06.30 ½Ã°£ 02:00:49 PM KST 
+// Ã€ÃŒ Ã†Ã„Ã€ÃÃ€Âº JAXB(JavaTM Architecture for XML Binding) Ã‚Ã¼ÃÂ¶ Â±Â¸Ã‡Ã¶ 2.2.8-b130911.1802 Â¹Ã¶Ã€Ã¼Ã€Â» Ã…Ã«Ã‡Ã˜ Â»Ã½Â¼ÂºÂµÃ‡Â¾ÃºÂ½Ã€Â´ÃÂ´Ã™. 
+// <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>Â¸Â¦ Ã‚Ã¼ÃÂ¶Ã‡ÃÂ½ÃŠÂ½ÃƒÂ¿Ã€. 
+// Ã€ÃŒ Ã†Ã„Ã€ÃÃ€Â» Â¼Ã¶ÃÂ¤Ã‡ÃÂ¸Ã© Â¼Ã’Â½Âº Â½ÂºÃ…Â°Â¸Â¶Â¸Â¦ Ã€Ã§Ã„Ã„Ã†Ã„Ã€ÃÃ‡Ã’ Â¶Â§ Â¼Ã¶ÃÂ¤ Â»Ã§Ã‡Ã—Ã€ÃŒ Â¼Ã•Â½Ã‡ÂµÃ‹Â´ÃÂ´Ã™. 
+// Â»Ã½Â¼Âº Â³Â¯Ã‚Â¥: 2017.06.30 Â½ÃƒÂ°Â£ 02:00:49 PM KST 
 //
 
 
@@ -15,23 +15,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 
-/**
- * <p>sqlType complex type¿¡ ´ëÇÑ Java Å¬·¡½ºÀÔ´Ï´Ù.
- * 
- * <p>´ÙÀ½ ½ºÅ°¸¶ ´ÜÆíÀÌ ÀÌ Å¬·¡½º¿¡ Æ÷ÇÔµÇ´Â ÇÊ¿äÇÑ ÄÜÅÙÃ÷¸¦ ÁöÁ¤ÇÕ´Ï´Ù.
- * 
- * <pre>
- * &lt;complexType name="sqlType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *       &lt;attribute name="key" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- * 
- * 
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sqlType", propOrder = {
     "value"
@@ -43,50 +26,18 @@ public class SqlType {
     @XmlAttribute(name = "key", required = true)
     protected String key;
 
-    /**
-     * value ¼Ó¼ºÀÇ °ªÀ» °¡Á®¿É´Ï´Ù.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * value ¼Ó¼ºÀÇ °ªÀ» ¼³Á¤ÇÕ´Ï´Ù.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setValue(String value) {
         this.value = value;
     }
 
-    /**
-     * key ¼Ó¼ºÀÇ °ªÀ» °¡Á®¿É´Ï´Ù.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
     public String getKey() {
         return key;
     }
 
-    /**
-     * key ¼Ó¼ºÀÇ °ªÀ» ¼³Á¤ÇÕ´Ï´Ù.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
     public void setKey(String value) {
         this.key = value;
     }

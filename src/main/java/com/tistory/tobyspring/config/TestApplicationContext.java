@@ -1,26 +1,19 @@
 package com.tistory.tobyspring.config;
 
-import com.tistory.tobyspring.dao.UserDao;
-import com.tistory.tobyspring.dao.UserDaoJdbc;
 import com.tistory.tobyspring.dao.sql.OxmSqlService;
 import com.tistory.tobyspring.dao.sql.SqlService;
 import com.tistory.tobyspring.dao.sql.registry.EmbeddedDbSqlRegistry;
 import com.tistory.tobyspring.dao.sql.registry.SqlRegistry;
 import com.tistory.tobyspring.factorybean.Message;
 import com.tistory.tobyspring.factorybean.MessageFactoryBean;
-import com.tistory.tobyspring.service.UserLevelUpgradePolicy;
-import com.tistory.tobyspring.service.UserService;
-import com.tistory.tobyspring.service.test.DummyMailSender;
-import com.tistory.tobyspring.service.test.TestUserLevelUpgradePolicy;
-import com.tistory.tobyspring.service.test.TestUserService;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.mail.MailSender;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.castor.CastorMarshaller;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -39,7 +32,12 @@ import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.
 @Configuration
 //@ImportResource("/test-datasource-context.xml") // 해당 xml에서 빈을 가져올 수 있음
 @EnableTransactionManagement // 3.1 부터 자주 사용 되는 전용 태그를 @Enable~ 대체 애노테이션 제공
+@ComponentScan(basePackages = "com.tistory.tobyspring") // 기본적으로 프로젝트 내의 모든 클래스패스를 다 뒤지기 때문에
+                                                        // 특정 패키지 안에서만 찾도록 기준이 되는 패키지를 지정
 public class TestApplicationContext {
+
+//    @Resource  : 빈의 아이디를 기준
+//    @Autowired : 빈의 타입을 기준
 
     @Bean
     public DataSource dataSource() {
@@ -58,36 +56,6 @@ public class TestApplicationContext {
         DataSourceTransactionManager tm = new DataSourceTransactionManager();
         tm.setDataSource(dataSource());
         return tm;
-    }
-
-    @Bean
-    public UserDao userDao() {
-        UserDaoJdbc userDaoJdbc = new UserDaoJdbc();
-        userDaoJdbc.setDataSource(dataSource());
-        userDaoJdbc.setSqlService(sqlService());
-
-        return userDaoJdbc;
-    }
-
-    @Bean
-    public UserService userService() {
-        TestUserService userService = new TestUserService();
-        userService.setUserDao(userDao());
-        userService.setUserLevelUpgradePolicy(userLevelUpgradePolicy());
-        return userService;
-    }
-
-    @Bean
-    public UserLevelUpgradePolicy userLevelUpgradePolicy() {
-        TestUserLevelUpgradePolicy userLevelUpgradePolicy = new TestUserLevelUpgradePolicy("madnite1");
-        userLevelUpgradePolicy.setUserDao(userDao());
-        userLevelUpgradePolicy.setMailSender(mailSender());
-        return userLevelUpgradePolicy;
-    }
-
-    @Bean
-    public MailSender mailSender() {
-        return new DummyMailSender();
     }
 
     @Bean

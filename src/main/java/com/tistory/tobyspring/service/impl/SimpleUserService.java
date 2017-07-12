@@ -5,6 +5,8 @@ import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.service.UserLevelUpgradePolicy;
 import com.tistory.tobyspring.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -12,18 +14,14 @@ import java.util.List;
  * Service <BR>
  * 일반적인 유저 비즈니스 로직 처리 클래스 <BR>
  */
+@Service("userService")
 public class SimpleUserService implements UserService {
 
+    @Autowired
     private UserDao userDao;
-    private UserLevelUpgradePolicy userLevelUpgradePolicy;
 
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
-    }
-
-    public void setUserLevelUpgradePolicy(UserLevelUpgradePolicy userLevelUpgradePolicy) {
-        this.userLevelUpgradePolicy = userLevelUpgradePolicy;
-    }
+    @Autowired
+    protected UserLevelUpgradePolicy userLevelUpgradePolicy;
 
     @Override
     public void add(User user) {

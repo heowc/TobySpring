@@ -40,7 +40,7 @@ public class ApplicationContextTest {
 
     @Test
     public void test_equalsDao() throws Exception {
-        UserDao userDao = this.context.getBean("userDao", UserDao.class);
+        UserDao userDao = this.context.getBean("userDaoJdbc", UserDao.class);
 
         assertThat(this.userDao, is(userDao));
     }

@@ -6,6 +6,7 @@ import com.tistory.tobyspring.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -16,10 +17,13 @@ import java.util.List;
  * DAO (Data Access Object) <BR>
  * 사용자 정보를 DB에 넣고 관리할 수 있는 클래스 <BR>
  */
+@Repository  // DAO같은 클래스는 @Repository 권장
+//@Component // 클래스를 빈으로 등록
 public class UserDaoJdbc implements UserDao {
 
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
     private SqlService sqlService;
 
     private RowMapper<User> userMapper =
@@ -39,11 +43,6 @@ public class UserDaoJdbc implements UserDao {
     @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
-    @Autowired
-    public void setSqlService(SqlService sqlService) {
-        this.sqlService = sqlService;
     }
 
     @Override

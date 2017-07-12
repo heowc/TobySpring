@@ -7,11 +7,13 @@ import com.tistory.tobyspring.service.UserLevelUpgradePolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
 
 /**
  * Service <BR>
  * 일반적인 유지 레벨 업그레이드 정책 서비스 클래스 <BR>
  */
+@Service("userLevelUpgradePolicy")
 public class SimpleUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
 
     /** 실버 등급이 되기 위한 최소 조건 */
@@ -24,10 +26,6 @@ public class SimpleUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
 
     @Autowired
     private MailSender mailSender;
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
-    }
 
     public void setMailSender(MailSender mailSender) {
         this.mailSender = mailSender;
