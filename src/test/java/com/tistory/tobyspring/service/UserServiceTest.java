@@ -1,14 +1,15 @@
 package com.tistory.tobyspring.service;
 
-import com.tistory.tobyspring.config.TestApplicationContext;
+import com.tistory.tobyspring.config.ApplicationContext;
 import com.tistory.tobyspring.dao.UserDao;
 import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
+import com.tistory.tobyspring.exception.TestUserLevelUpgradePolicyException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -20,21 +21,17 @@ import static com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy.M
 import static com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy.MIN_RECOMMENDCOUNT_FOR_GOLD;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestApplicationContext.class)
+@ContextConfiguration(classes = ApplicationContext.class)
+@ActiveProfiles("test")
 //@Transactional
 //@TransactionConfiguration(defaultRollback = false) // 클래스레벨에서의 롤백
 public class UserServiceTest {
 
     @Autowired
-    private ApplicationContext context;
-
-    @Autowired
     private UserService testUserService;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private PlatformTransactionManager transactionManager;
@@ -57,6 +54,15 @@ public class UserServiceTest {
         );
     }
 
+    private void checkLevelUpgraded(User user, boolean isUpgraded) {
+        User userUpdate = userDao.get(user.getId());
+        if (isUpgraded) {
+            assertThat(userUpdate.getLevel(), is(user.getLevel().nextLevel()));
+        } else {
+            assertThat(userUpdate.getLevel(), is(user.getLevel()));
+        }
+    }
+
     @Test
     public void test_add() {
         userDao.deleteAll();
@@ -73,6 +79,49 @@ public class UserServiceTest {
 
         assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
         assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));
+    }
+
+    /**
+     * 트랜잭션 문제 발생 </BR>
+     * <pre>
+     *     Connection c = dataSource.getConnection();
+     *
+     *     c.setAutoCommit(false); // 트랜잭션 시작
+     *     try {
+     *         PrepareStatement st1 =
+     *              c.prepareStatement("update users ...");
+     *         st1.executeUpdate();
+     *
+     *         PrepareStatement st2 =
+     *              c.prepareStatement("delete users ...");
+     *         st2.executeUpdate();
+     *
+     *         c.commit(); // 트랜잭션 커밋
+     *     } catch(Exception e) {
+     *         c.rollback(); // 트랜잭션 롤백
+     *     }
+     *
+     *     c.close();
+     * </pre>
+     *
+     * => 트랜잭션 동기화 방식
+     * (트랜잭션을 시작하기 위해 만든 Connection을 특별한 저장소에 보관해두고, 이후에 저장된 Connection을 가져다가 사용하는 것)
+     */
+    @Test
+    public void test_upgradeAllOrNothing() throws Exception {
+        userDao.deleteAll();
+
+        for (User user: userList) {
+            userDao.add(user);
+        }
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserLevelUpgradePolicyException expected");
+        } catch (TestUserLevelUpgradePolicyException e) {
+        }
+
+        checkLevelUpgraded(userList.get(1), false);
     }
 
     // JDBC 드라이버에 따라 다르다.

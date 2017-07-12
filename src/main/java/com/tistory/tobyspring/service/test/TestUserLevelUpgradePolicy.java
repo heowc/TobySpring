@@ -2,12 +2,12 @@ package com.tistory.tobyspring.service.test;
 
 import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.exception.TestUserLevelUpgradePolicyException;
-import com.tistory.tobyspring.service.UserLevelUpgradePolicy;
 import com.tistory.tobyspring.service.impl.SimpleUserLevelUpgradePolicy;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile("test")
 public class TestUserLevelUpgradePolicy extends SimpleUserLevelUpgradePolicy {
 
     private final String id = "madnite1";

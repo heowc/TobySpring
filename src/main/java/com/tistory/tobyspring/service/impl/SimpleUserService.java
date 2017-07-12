@@ -6,6 +6,7 @@ import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.service.UserLevelUpgradePolicy;
 import com.tistory.tobyspring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
  * 일반적인 유저 비즈니스 로직 처리 클래스 <BR>
  */
 @Service("userService")
+@Profile("product")
 public class SimpleUserService implements UserService {
 
     @Autowired

@@ -5,6 +5,7 @@ import com.tistory.tobyspring.domain.Level;
 import com.tistory.tobyspring.domain.User;
 import com.tistory.tobyspring.service.UserLevelUpgradePolicy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
  * 일반적인 유지 레벨 업그레이드 정책 서비스 클래스 <BR>
  */
 @Service("userLevelUpgradePolicy")
+@Profile("product")
 public class SimpleUserLevelUpgradePolicy implements UserLevelUpgradePolicy {
 
     /** 실버 등급이 되기 위한 최소 조건 */

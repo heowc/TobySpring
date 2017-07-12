@@ -1,6 +1,6 @@
 package com.tistory.tobyspring.oxm;
 
-import com.tistory.tobyspring.config.TestApplicationContext;
+import com.tistory.tobyspring.config.ApplicationContext;
 import com.tistory.tobyspring.dao.xml.jaxb.SqlType;
 import com.tistory.tobyspring.dao.xml.jaxb.Sqlmap;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestApplicationContext.class)
+@ContextConfiguration(classes = ApplicationContext.class)
 public class JaxbTest {
 
     @Autowired
