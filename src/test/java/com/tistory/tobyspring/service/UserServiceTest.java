@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,6 +30,9 @@ import static org.junit.Assert.fail;
 //@Transactional
 //@TransactionConfiguration(defaultRollback = false) // 클래스레벨에서의 롤백
 public class UserServiceTest {
+
+    @Autowired
+    DefaultListableBeanFactory beanFactory;
 
     @Autowired
     private UserService testUserService;
@@ -146,4 +150,12 @@ public class UserServiceTest {
 
 //        transactionManager.commit(txStatus);
     }
+
+    @Test
+    public void test_readBeanFactory() {
+        for ( String beanName : beanFactory.getBeanDefinitionNames() ) {
+            System.out.println(beanName);
+        }
+    }
+
 }
