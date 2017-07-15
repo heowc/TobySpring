@@ -12,19 +12,19 @@ import java.util.Properties;
 
 @Configuration
 @Profile("product")
-@PropertySource(name = "mail", value = "classpath:properties/mail.properties")
+@PropertySource(value = "classpath:properties/mail.properties")
 public class ProductApplicationContext {
 
-    @Value("#{mail['mail.host']}")
+    @Value("${mail.host}")
     private String host;
 
-    @Value("#{mail['mail.port']}")
+    @Value("${mail.port}")
     private Integer port;
 
-    @Value("#{mail['mail.username']}")
+    @Value("${mail.username}")
     private String username;
 
-    @Value("#{mail['mail.password']}")
+    @Value("${mail.password}")
     private String password;
 
     @Bean
