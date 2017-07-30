@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -77,5 +79,17 @@ public class CreateApplicationContextTest {
         hello.print();
 
         assertThat(context.getBean("printer").toString(), is("Hello Spring"));
+    }
+
+    @Test
+    public void test_simpleBeanScanning() {
+        ApplicationContext ctx =
+                new AnnotationConfigApplicationContext(
+                        "com.tistory.tobyspring.context"
+                );
+
+        AnnotatedHello hello = ctx.getBean("annotatedHello", AnnotatedHello.class);
+
+        assertThat(hello, is(notNullValue()));
     }
 }
