@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!--
         * IoC 컨테이너의 가장 기본적인 역할은 코드를 대신해서 애플리케이션을 구성하는 오브젝트를 생성하고 관리하는 것이다.
@@ -35,7 +36,16 @@
            필터를 적용하여 빈 등록을 위한 클래스들을 선별해낸다.
          - 디폴트 필터에 적용되는 애노테이션을 스프링에서는 스테레오타입 애노테이션이라고 부른다 ( @Component, .. 등)
 
-        ex) annotatedHello 라는 빈 자동 생성
+         - XML을 이용한 빈 스캐너 등록
 
+         +) 빈 스캐너를 내장한 애플리케이션 컨텍스트 사용
+    -->
+    <context:component-scan base-package="com.tistory.tobyspring" />
+
+    <!--
+        빈 등록 방법
+        3. @Configuration 클래스의 @Bean 메소드
+         - 컴파일러나 IDE를 통한 타입 검증이 가능하다.
+         - 이해하기 쉽다.
     -->
 </beans>
