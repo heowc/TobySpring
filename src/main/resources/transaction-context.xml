@@ -43,7 +43,7 @@
     -->
 
     <!-- @Transactional 활성화 -->
-    <tx:annotation-driven />
+    <!--<tx:annotation-driven />-->
 
     <!--
     <tx:advice id="transactionAdvice">

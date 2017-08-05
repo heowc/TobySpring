@@ -40,8 +40,9 @@
          - XML을 이용한 빈 스캐너 등록
 
          +) 빈 스캐너를 내장한 애플리케이션 컨텍스트 사용
+        <context:component-scan base-package="com.tistory.tobyspring" />
     -->
-    <context:component-scan base-package="com.tistory.tobyspring" />
+
 
     <!--
         빈 등록 방법
