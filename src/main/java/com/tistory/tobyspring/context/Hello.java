@@ -1,7 +1,5 @@
 package com.tistory.tobyspring.context;
 
-import javax.annotation.Resource;
-
 public class Hello {
 
     private String name;
@@ -42,3 +40,18 @@ public class Hello {
      : 타입 외의 정보를 추가해서 자동와이어링을 세밀하게 제어할 수 있는 보조적인 방법
 
  */
+
+/*
+    메타정보 종류에 따른 값 설정 방법
+    1. XML <property>
+    2. @Value
+        - 시스템 프로퍼티 ( #{systemProperties['os.name']} )
+        - 어플리케이션 환경정보 프로퍼티 ( <context:property-placeholder location="classpath:~~"/>
+                                        #{{key}}
+                                    )
+        - PropertyEditor, ConversionService라는 것으로 문자열이 자동 형변환이 된다.
+        - <util:list>, <util:set>, <util:map>, <utils:properties>
+    3. SpEL( Spring Expression Language )
+        - 빈에 직접 접근할 수 있는 표현식
+
+*/
