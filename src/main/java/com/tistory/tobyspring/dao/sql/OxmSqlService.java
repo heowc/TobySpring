@@ -9,7 +9,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 
-import javax.annotation.PostConstruct;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class OxmSqlService implements SqlService {
         this.sqlRegistry = sqlRegistry;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void loadSql() {
         oxmSqlReader.read(sqlRegistry);
     }

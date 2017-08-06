@@ -3,8 +3,6 @@ package com.tistory.tobyspring.dao.sql;
 import com.tistory.tobyspring.dao.sql.reader.SqlReader;
 import com.tistory.tobyspring.dao.sql.registry.SqlRegistry;
 
-import javax.annotation.PostConstruct;
-
 public class BaseSqlService implements SqlService {
 
     private SqlReader sqlReader;
@@ -18,7 +16,7 @@ public class BaseSqlService implements SqlService {
         this.sqlRegistry = sqlRegistry;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void loadSql() {
         sqlReader.read(sqlRegistry);
     }

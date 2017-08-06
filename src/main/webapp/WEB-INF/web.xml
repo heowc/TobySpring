@@ -28,26 +28,38 @@
     ※ ServletContextListener 인터페이스를 구현한 리스너는 DB 연결 기능이나 로깅 같은 서비스를 만드는 데 유용하다.
 
     => 스프링은 이런 기능을 가진 ContextLoaderListener를 제공한다.
-    -->
+
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
+    -->
+
+    <!-- AnnotationConfigWebApplicationContext 경우, annotation-config가 기본적으로 추가되기 때문에 별도의 설정을 하지 않아도 된다. -->
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+    </context-param>
 
     <!--
     
      리스너가 만들어주는 컨텍스트는 기본적으로 다음의 값을 적용한다.
      * 애플리케이션 컨텍스트 클래스 : XmlWebApplicationContext
      * XML 설정파일 위치 : /WEB-INF/applicationContext.xml
-     -->
+
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            /WEB-INF/applicationContext.xml
+            /WEB-INF/applicationContext.xml = classpath:/WEB-INF/applicationContext.xml
         </param-value>
-        <!-- = classpath:/WEB-INF/applicationContext.xml -->
 
-        <!-- /WEB-INF/*Context.xml -> Context.xml로 끝나는 파일 -->
-        <!-- /WEB-INF/**/*Context.xml -> 모든 서브 폴더에 Context.xml로 끝나는 파일 -->
+         /WEB-INF/*Context.xml -> Context.xml로 끝나는 파일
+         /WEB-INF/**/*Context.xml -> 모든 서브 폴더에 Context.xml로 끝나는 파일
+    </context-param> -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>com.tistory.tobyspring.config</param-value>
+        <!-- 패키지내에 모든 @Configuration 클래스를 지정 -->
     </context-param>
 
     <!--
@@ -69,6 +81,14 @@
     <servlet>
         <servlet-name>spring</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextClass</param-name>
+            <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>com.tistory.tobyspring.config.WebConfig</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

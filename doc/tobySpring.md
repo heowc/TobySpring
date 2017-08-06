@@ -55,9 +55,9 @@
 
 #### 빈 등록 방법
 
-1. <bean> 태그
+1. bean 태그
    - 가장 처음 접할 때 바람직한 방법 중 하나 이다.
-   - 자주 사용하는 기술이라면, <bean> 대신 간결한 커스텀 태그를 만드는 것이 좋다.
+   - 자주 사용하는 기술이라면, bean 태그 대신 간결한 커스텀 태그를 만드는 것이 좋다.
    
 2. 자동인식을 이용한 빈 등록
    - 스프링의 빈 스캐너는 지정된 클래스패스 아래에 있는 모든 패키지의 클래스를 대상으로 필터를 적용하여 빈 등록을 위한 클래스들을 선별해낸다.
@@ -100,7 +100,7 @@
    
 #### Bean 종류
 
-- 애플리케이션 조직 빈 
+- 애플리케이션 로직 빈 
    - 비즈니스 로직을 담당하는 빈
 - 애플리케이션 인프라 빈 
    - 스프링에서 제공하지 않는 부분을 빈으로 만드는 것
@@ -110,6 +110,9 @@
    - @PostConstruct
    
       > @Configuration, @Bean, @PostConstruct은 스프링 기본 스펙이 아니다.
-        빈 후처리기에 의해 등록 되는 것이기 때문에 빈 후처리기인 <context:annotation-config /> 를 등록해줘야 한다.
-        만약 <context:component-config basepackages="..." /> 를 등록해줬다면, component scan과정에서 해당 빈이 등록이 되었기 때문에
-        <context:annotation-config /> 를 생략해도 된다.
+        빈 후처리기에 의해 등록 되는 것이기 때문에, 빈 후처리기를 등록해주는 <context:annotation-config /> 를 추가해줘야 한다.
+        만약 <context:component-config basepackages="..." /> 를 등록해줬다면, component scan과정에서 annotation-config에서 
+        등록해주는 빈을 등록 해주기 때문에 <context:annotation-config /> 를 생략해도 된다.
+        
+   - @ComponentScan, @Import, @ImportResource, @Enable~~
+   
