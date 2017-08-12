@@ -116,3 +116,63 @@
         
    - @ComponentScan, @Import, @ImportResource, @Enable~~
    
+#### 런타임 환경 추상화
+
+- bean 태그에 profile 적용
+- 활성화 profile 적용방법
+   - WAS 레벨 : JVM Option에 `-Dspring.profiles.active={profile}`
+   - servlet 레벨
+      ```xml
+      <context-param>
+         <param-name>spring.profiles.active</param-name>
+         <param-value>{profile}</param-value>
+      </context-param>
+ 
+      <servlet>
+         <!-- ... -->
+         <init-param>
+            <param-name>spring.profiles.active</param-name>
+            <param-value>{profile}</param-value>
+         </init-param>
+         <!-- ... -->
+      </servlet>
+      ```
+   - bean 레벨 : `<beans profile={profile}` , `@Profile("{profile}")`
+   
+- 프로퍼티
+   - java  : `new Properties().load(new FileInputStream("~"));`
+   - XML ① : `<util:properties location="~" />`
+   - XML ② : `<context:propertyplaceholder location="~" />`
+   
+   ※ 프로퍼티는 ISO-8859-1 인코딩만 지원 => `new Properties().loadFromXML("~") 사용`
+   
+   - 환경변수, 시스템 프로퍼티, jndi에 유용하게 사용
+
+## 데이터 액세스 기술
+
+### DAO
+
+- 인터페이스로 구현한다.
+- 필요한 메소드만 public 접근자 사용
+- 복구 불가능한 예외는 RuntimeException 사용
+- DataSource
+   - SimpleDriverDataSource (매번 커넥션 만들어 사용)
+   - SimpleConnectionDataSource (하나의 물리적인 커넥션 사용) -> sync 오류 발생
+   => 위 두가지는 테스트용도로만 사용한다.
+- DB 커넥션 풀을 사용한다.
+   - 오픈소스 DB 커넥션 풀(아파치 DBCP(2), c3p0 JDBC, 상용 DB 커넥션풀)
+   - JNDI,WAS DB 풀
+   
+### JDBC
+
+- 기본이 되는 low-level API
+- 스프링 JDBC는 단순하고 템플릿/콜백을 지원한다.
+   - SimpleJdbcTemplate
+      - 위치 치환자 가능 ( ? 사용)
+      - 이름 치환자 가능 ( Map이나 MapSourceParameterSource 사용, BeanPropertySqlParameterSource 사용 => domain이나 dto 클래스 필드 명(setter/getter))
+   - SimpleJdbcInsert, SimpleJdbcCall
+- 특징
+   - 단일 로우 조회 시, 결과가 없으면 EmptyResultDataAccessException 발생
+   - 다중 컬럼 조회 시, RowMapper나 BeanPropertySqlParameterSource 사용
+   - SimpleJdbcInsert는 테이블 별로 만들어서 사용
+   - SimpleJdbcCall은 저장 프로시저나 저장 펑션에 사용
