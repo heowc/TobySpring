@@ -175,4 +175,57 @@
    - 단일 로우 조회 시, 결과가 없으면 EmptyResultDataAccessException 발생
    - 다중 컬럼 조회 시, RowMapper나 BeanPropertySqlParameterSource 사용
    - SimpleJdbcInsert는 테이블 별로 만들어서 사용
-   - SimpleJdbcCall은 저장 프로시저나 저장 펑션에 사용
+   - SimpleJdbcCall은 저장 프로시저나 저장 펑션에 사용 
+- 스프링 JDBC 설계법
+   - DataSource를 DI로 갖고, JdbcTemplate와 JdbcInsert, JdbcCall을 생성
+     why ?) JdbcInsert, JdbcCall은 DAO마다 다른 오브젝트를 갖는 경향이 있다.
+   - JdbcDaoSupport 제공
+   
+### ibatis ( mybatis )
+
+- SQL Mapper
+- SQL을 별도의 파일로 분리 가능하다.
+- 오브젝트와 SQL간의 자동 매핑이 이루어진다.
+- SqlMapClient 핵심 인터페이스
+   - JDBC에서 필수로 사용되는 Connection, Statement, ResultSet과 동급 오브젝트
+   - SqlMapClientBuilder로 생성 가능(팩토리빈)
+- 공통 설정 XML과 매핑 정보 XML이 필요하다.
+   - 공통 설정 XML
+      - 데이터소스 => 스프링빈 이용 가능
+      - 트랜잭션 => 스프링빈 이용 가능
+      - 매핑리소스
+      - 프로퍼티
+      - 타입 별칭 핸들러
+   - 매핑 정보 XML
+      - SQL문
+      - 자바 오브젝트
+- 스프링에서는 SqlMapClient를 받아 사용할 수 있는 SqlMapClientTemplate를 제공
+- SqlMapClientDaoSupport 제공
+
+### JPA
+
+- 영속성 관리와 O/R 매핑을 위한 표준 기술
+- 오브젝트 중심인 언어에서의 불푠함 해소
+- EntityManager 핵심 인터페이스
+- EntityManagerFactory로 생성 가능(팩토리빈)
+   - LocaleEntityManagerFactoryBean => 권장하지 않음
+   - Java EE에서 제공하는 JPA Provider(JNDI)
+   - 스프링에서 제공하는 LocalContainerEntityManagerFactoryBean
+- 바이트 코드를 직접 조작하여 확장된 기능 추가
+   - 빌드 중 변경
+   - 런타임 시, 바이트 코드를 메모리에 로딩하면서 변경
+      - 로드타임 위빙
+      - 해당 클래스를 "로드타임 위버"라고 불린다.
+- JPA는 반드시 트랜잭션 안에서 동작
+- JpaTempate, JpaDaoSupport 제공
+
+### 하이버네이트
+
+- 가장 성공한 ORM
+- SessionFactory 핵심 인터페이스
+   - LocalSessionFactoryBean
+   - AnnotationSessionFactoryBean
+- 트랜잭션 매니저
+   - HibernateTransactionManager
+   - JtaTransactionManager
+- HibernateTemplate, Session 제공
