@@ -229,3 +229,51 @@
    - HibernateTransactionManager
    - JtaTransactionManager
 - HibernateTemplate, Session 제공
+
+### 트랜잭션
+
+- 선언적 트랜잭션 가능
+   - 코드 내에서 직접 트랜잭션을 관리하고 트랜잭션 정보를 파라미터로 넘겨서 사용하지 않아도 된다.
+   - 트랜잭션 스크립트 방식(하나의 트랜잭션 안에서 동작해야 하는 코드를 한 군데 모아서 만드는 방식)의 코드를 탈피할 수 있다.
+- 고급 기능(JTA, Entity Bean)을 간단한 톰캣 서버에서 동작하는 가벼운 애플리케이션에도 적용해준다.
+- 스프링에서 제공하는 트랜잭션 서비스는 추상화와 동기화이다.
+   - 동기화는 추상화와 데이터 액세스 기술을 위한 탬플릿과 더불어 선언적 트랜잭션을 가능하게 해주는 핵심기능이다.
+   - 데이터 액세스 기술
+      - PlatformTransactionManager : 추상화의 핵심 인터페이스
+      - 종류
+         - DataSourceTransactionManager
+         - JpaTransactionManager
+         - HibernateTransactionManager
+         - JmsTransactionManager
+         - CciTransactionManager
+         - JtaTransactionManager
+- aop와 tx 네임스페이스, @Transactional
+
+## 스프링 MVC
+
+- 종류
+   - 스프링 웹 프레임워크
+      - 스프링 서블릿/스프링 MVC : DispatcherServlet 핵심 기술
+      - 스프링 포틀릿 : JSR-168, 286 자바 표준 기술
+   - 스프링 포트폴리오 웹 프레임워크
+      - Spring Web Flow
+      - Spring JavaScript
+      - Spring Faces
+      - Spring Web Service
+      - Spring BlazeDS Integration
+   - 그 외
+      - JSP/Servlet
+      - 스트럿츠1
+      - 스트럿츠2
+      - Tapestry 3, 4
+      - JSF/Seam
+
+- 유연성과 확장성을 갖춘 범용적 프레임워크
+- M(정보를 담는 모델), V(화면 출력 뷰), C(제어 로직 컨트롤러)
+- MVC 아키텍처는 보통 프론트 컨트롤러 패턴과 함께 적용된다.
+   ```text
+      HTTP 요청 → DispatcherServlet ↔ Controller
+                         ↑↓               ↓
+      HTTP 응답 ←        View            Model
+   ```
+      
