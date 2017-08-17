@@ -45,7 +45,6 @@
     XML 문서  ↘
     애노테이션 → BeanDefinition → IoC 컨테이너
     자바 코드  ↗
-    
     ```
 
 - 몇 가지 필수항목을 젱하면 컨테이너에 미리 설정된 디폴트 값이 적용된다.
@@ -178,7 +177,7 @@
    - SimpleJdbcCall은 저장 프로시저나 저장 펑션에 사용 
 - 스프링 JDBC 설계법
    - DataSource를 DI로 갖고, JdbcTemplate와 JdbcInsert, JdbcCall을 생성
-     why ?) JdbcInsert, JdbcCall은 DAO마다 다른 오브젝트를 갖는 경향이 있다.
+     `why ?) JdbcInsert, JdbcCall은 DAO마다 다른 오브젝트를 갖는 경향이 있다.`
    - JdbcDaoSupport 제공
    
 ### ibatis ( mybatis )
@@ -276,4 +275,67 @@
                          ↑↓               ↓
       HTTP 응답 ←        View            Model
    ```
+   1. DispatcherServlet 의 HTTP 요청 접수
+      - web.xml 에 정의
+   
+   2. DispatcherServlet 에서 컨트롤러로 HTTP 요청 위임
+      - 핸들러 매핑 전략 ( 컨트롤러 = 핸들러 )
+   
+   3. 컨트롤러의 모델 생성과 정보 등록
+      - 사용자 요청 해석
+      - 서비스 계층 위임
+      - 결과 모델 생성
+      - 뷰 종류 결정
+   
+   4. 컨트롤러의 결과 리턴 : 모델과 뷰
+      - 뷰 리졸러가 이를 이용햐 뷰 오브젝트를 생성
       
+   5. DispatcherServlet 의 뷰 호출과 모델 참조
+      - 클라이언트에게 전달할 최종 결과물( JSP, PDA / RSS, JSON ) 생성 요청
+      - 최종적으로 HttpServletResponse 에 담김.
+ 
+   6. HTTP 응답 돌려주기
+      - HttpServletResponse 를 서블릿 컨테이너에 전달
+      
+- HandlerMapping
+   - 컨트롤러 결정 로직을 담당
+   - BeanNameUrlHandlerMapping / DefaultAnnotationHandlerMapping
+   
+- HandlerAdapter
+   - DispatcherServlet 이 선택할 컨트롤러를 호출할 때 사용
+   - HttpRequestHandlerAdapter / SimpleControllerHandlerAdapter / AnnotationMethodHandlerAdapter
+   - 핸들로 매핑과 어댑터는 관련이 없을 수 있다.
+   - 하지만 @RequestMapping / @Controller 경우, DefaultAnnotationHandlerMapping 로 핸들러를 지정하고, AnnotationMethodHandlerAdapter 로 대응되어 호출된다.
+   
+- HandlerExceptionResolver
+   - 예외가 발생했을 때 처리하는 로직
+   - DispatcherServlet 을 통해 처리돼야 한다.
+   - AnnotationMethodHandlerExceptionResolver / ResponseStatusExceptionResolver / DefaultHandlerExceptionResolver
+   
+- ViewResolver
+   - 뷰 이름을 참고하여, 적절한 뷰 오브젝트를 찾아주는 전략 오브젝트.
+   - InternalResourceViewResolver
+   
+   1. LocaleResolver
+      - 지역 정보를 결정 해주는 전략
+      - AcceptHeaderLocaleResolver => HTTP 헤더 정보로 지역 정보 설정
+      - HTTP 헤더, 세션, URL 파라미터, 쿠키, XML 등 이용 가능
+      
+   2. ThemeResolver
+      - 테마 정보 결정해주는 전략
+      
+   3. RequestToViewNameTranslator
+      - 뷰 이름이나 뷰 오브젝트를 제공해주지 않았을 경우, URL 을 참고하여 자동으로 뷰 이름을 생성
+      - DefaultRequestToViewNameTranslator
+      
+   - DispatcherServlet 을 직접 DI 할 수 없다.
+   
+### 스프링 웹 애플리케이션 환경 구성
+
+- 생성 방법
+   1. Spring MVC Project
+   2. Dynamic Web Project
+   
+- 웹 애플리케이션 구성 방법 ( 3가지 )
+   1. 루트 컨텍스트와 서블릿 컨텍스트
+      - 서블릿 컨텍스트는 루트 컨텍스트를 부모로 갖는다.
