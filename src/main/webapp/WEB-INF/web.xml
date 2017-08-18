@@ -33,13 +33,18 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    -->
 
-    <!-- AnnotationConfigWebApplicationContext 경우, annotation-config가 기본적으로 추가되기 때문에 별도의 설정을 하지 않아도 된다. -->
+    AnnotationConfigWebApplicationContext 경우, annotation-config가 기본적으로 추가되기 때문에 별도의 설정을 하지 않아도 된다.
     <context-param>
         <param-name>contextClass</param-name>
         <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
     </context-param>
+
+    -->
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
     <!--
     
@@ -55,11 +60,20 @@
 
          /WEB-INF/*Context.xml -> Context.xml로 끝나는 파일
          /WEB-INF/**/*Context.xml -> 모든 서브 폴더에 Context.xml로 끝나는 파일
-    </context-param> -->
-    <context-param>
+    </context-param>
+
+     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>com.tistory.tobyspring.config</param-value>
-        <!-- 패키지내에 모든 @Configuration 클래스를 지정 -->
+        패키지내에 모든 @Configuration 클래스를 지정
+     </context-param>
+     -->
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/applicationContext.xml
+        </param-value>
     </context-param>
 
     <!--
@@ -76,8 +90,7 @@
     2. load-on-startup
       - 서블릿 컨테이너가 등록된 서블릿을 언제 만들고 초기화할지, 또 그 순서가 어떻게 되는지를 지정하는 정수 값이다.
       - 작은 수를 가진 서블릿이 우선적으로 만들어진다.
-      -
-    -->
+
     <servlet>
         <servlet-name>spring</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -91,5 +104,7 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
+    -->
 
 </web-app>
