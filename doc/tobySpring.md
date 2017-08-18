@@ -339,3 +339,60 @@
 - 웹 애플리케이션 구성 방법 ( 3가지 )
    1. 루트 컨텍스트와 서블릿 컨텍스트
       - 서블릿 컨텍스트는 루트 컨텍스트를 부모로 갖는다.
+      - 서블릿 컨텍스트
+         - 핸들러 어댑터 : SimpleControllerHandlerAdapter
+         - 핸들러 매핑 : BeanNameUrlHandlerMapping
+         - 뷰 리졸버 : InternalResourceViewResolver
+         
+- 서블릿 Mock 테스트
+   - MockHttpServletRequest
+   - MockHttpServletResponse
+   - MockHttpSession
+   - MockServletConfig / MockServletContext
+   - ConfigurableDispatcherServlet
+   - AbstractDispatcherServletTest
+   
+- 컨트롤러
+   - 서블릿 컨테이너가 요청 애트리뷰트로 전달해주는 것들을 참고 해야한다.
+   - 컨트롤러 종류와 핸들러 어댑터
+      - Servlet / SimpleServletHandlerAdapter
+         - 기존 코드 유지 용이
+      
+      - Controller / SimpleControllerHandlerAdapter
+         - handlerRequest 를 응용한 AbstractController 권장
+         - 세션 동기화 보장 가능
+         - HTTP 메소드 지정 가능
+         - 각종 헤더 프로퍼티 활성화 가능
+         
+      - AnnotationMethodHandlerAdapter
+         - 컨트롤러 타입 지정되어 있지 않음 ( 애노테이션 정보와 메소드 이름, 파라미터, 리턴 타입 )
+         - 컨트롤러 하나가 하나 이상의 URL 매핑 가능
+         - DefaultAnnotationHandlerMapping 핸들러 매핑과 함께 사용해야 한다.
+         - 가장 인기 있는 컨트롤러 작성 방법
+
+   - 핸들러 매핑
+      - HTTP 요청정보를 이용해서 이를 처리할 핸들러 오브젝트, 즉 컨트롤러를 찾아주는 기능
+      - BeanNameUrlHandlerMapping / DefaultAnnotationHandlerMapping 이 기본적으로 등록된다.
+      - 종류
+         - BeanNameUrlHandlerMapping
+            - 빈의 이름에 들어있는 URL 을 HTTP 요청의 URL 과 비교해서 일치하는 빈을 찾아준다.
+            
+         - ControllerBeanNameHandlerMapping
+            - 빈의 아이디나 빈의 이름을 이용해 매핑해주는 핸들러 매핑 전략
+         
+         - ControllerClassNameHandlerMapping
+            - 빈 이름 대신 클래스 이름을 URL 에 매핑해주는 핸들러 매핑 클래스
+         
+         - SimpleUrlHandlerMapping
+            - URL 과 컨트롤러의 매핑정보를 한곳에 모아놓을 수 있는 핸들러 매핑 전략
+         
+         - DefaultAnnotationHandlerMapping
+            - @RequestMapping 이라는 애노테이션을 컨트롤러 클래스나 메소드에 직접 부여하고 이를 이용해 매핑하는 전략
+            
+   - 핸들러 인터셉터
+      - DispatcherServlet 이 컨트롤러를 호출하기 전과 후에 요청과 응답을 참조하거나 가공할 수 있는 일종의 필터
+      - HandlerInterceptor 인터페이스 구현
+         - preHandle : 컨트롤러 호출 전
+         - postHandle : 컨트롤러 호출 후 ( preHandle 에서 false 를 호출했다면, 호출 안됨)
+         - afterCompletion : 모든 작업이 다 완료된 후에 실행
+      - 컨트롤러에 공통적으로 적용할 부가기능 추가에 용이
