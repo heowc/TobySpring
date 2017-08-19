@@ -12,14 +12,14 @@ import java.util.Map;
 
 public class HelloController implements Controller {
 
-    @Autowired
-    private Hello hello;
+	@Autowired
+	private Hello hello;
 
-    @Override
-    public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        hello.setName("Servlet Context");
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", hello.sayHello());
-        return new ModelAndView("/WEB-INF/view/hello.jsp", map);
-    }
+	@Override
+	public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+		hello.setName("Servlet Context");
+		Map<String, Object> map = new HashMap<>();
+		map.put("message", hello.sayHello());
+		return new ModelAndView("hello", map);
+	}
 }

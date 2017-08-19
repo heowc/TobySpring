@@ -4,17 +4,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Test</title>
+	<title>Test</title>
 </head>
 <body>
 
 <%
-    ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
+	ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
 
-    Hello hello = context.getBean(Hello.class);
-    hello.setName("Root Context");
+	Hello hello = context.getBean(Hello.class);
+	hello.setName("Root Context");
 
-    out.println(hello.sayHello());
+	out.println(hello.sayHello());
 %>
 
 </body>
