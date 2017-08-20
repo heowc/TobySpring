@@ -30,7 +30,7 @@
 2. 엔터프라이즈 애플리케이션 레벨에 두는 방법
 
 	> 일반적으로는 두가지 방식을 모두 사용해 컨테이너를 만든다.
-		두 개의 컨테이너, 즉 WebApplicationContext가 만들어진다.
+		두 개의 컨테이너, 즉 WebApplicationContext 가 만들어진다.
 		두개의 서블릿이 하나의 웹 애플리케이션에서 사용되는 경우, 두 서블릿의 컨텍스트에서 공통적으로 사용하는 별도의 컨텍스트를 만들어준다.
 
 ## IoC/DI
@@ -107,9 +107,9 @@
 	- 빈 등록&생성, 환경설정, 초기화
 	- @PostConstruct
 
-		> @Configuration, @Bean, @PostConstruct은 스프링 기본 스펙이 아니다.
+		> @Configuration, @Bean, @PostConstruct 은 스프링 기본 스펙이 아니다.
 			빈 후처리기에 의해 등록 되는 것이기 때문에, 빈 후처리기를 등록해주는 <context:annotation-config /> 를 추가해줘야 한다.
-			만약 <context:component-config basepackages="..." /> 를 등록해줬다면, component scan과정에서 annotation-config에서 
+			만약 <context:component-config basepackages="..." /> 를 등록해줬다면, component scan 과정에서 annotation-config 에서 
 			등록해주는 빈을 등록 해주기 때문에 <context:annotation-config /> 를 생략해도 된다.
 
 	- @ComponentScan, @Import, @ImportResource, @Enable~~
@@ -171,15 +171,15 @@
 - 스프링 JDBC는 단순하고 템플릿/콜백을 지원한다.
 	- SimpleJdbcTemplate
 		- 위치 치환자 가능 ( ? 사용)
-		- 이름 치환자 가능 ( Map이나 MapSourceParameterSource 사용, BeanPropertySqlParameterSource 사용 => domain이나 dto 클래스 필드 명(setter/getter))
+		- 이름 치환자 가능 ( Map이나 MapSourceParameterSource 사용, BeanPropertySqlParameterSource 사용 => domain 이나 dto 클래스 필드 명(setter/getter))
 	- SimpleJdbcInsert, SimpleJdbcCall
 - 특징
 	- 단일 로우 조회 시, 결과가 없으면 EmptyResultDataAccessException 발생
-	- 다중 컬럼 조회 시, RowMapper나 BeanPropertySqlParameterSource 사용
-	- SimpleJdbcInsert는 테이블 별로 만들어서 사용
-	- SimpleJdbcCall은 저장 프로시저나 저장 펑션에 사용 
+	- 다중 컬럼 조회 시, RowMapper 나 BeanPropertySqlParameterSource 사용
+	- SimpleJdbcInsert 는 테이블 별로 만들어서 사용
+	- SimpleJdbcCall 은 저장 프로시저나 저장 펑션에 사용 
 - 스프링 JDBC 설계법
-	- DataSource를 DI로 갖고, JdbcTemplate와 JdbcInsert, JdbcCall을 생성
+	- DataSource 를 DI로 갖고, JdbcTemplate 와 JdbcInsert, JdbcCall을 생성
 		`why ?) JdbcInsert, JdbcCall은 DAO마다 다른 오브젝트를 갖는 경향이 있다.`
 	- JdbcDaoSupport 제공
 
@@ -190,8 +190,8 @@
 - 오브젝트와 SQL간의 자동 매핑이 이루어진다.
 - SqlMapClient 핵심 인터페이스
 	- JDBC에서 필수로 사용되는 Connection, Statement, ResultSet과 동급 오브젝트
-	- SqlMapClientBuilder로 생성 가능(팩토리빈)
-- 공통 설정 XML과 매핑 정보 XML이 필요하다.
+	- SqlMapClientBuilder 로 생성 가능(팩토리빈)
+- 공통 설정 XML과 매핑 정보 XML 이 필요하다.
 	- 공통 설정 XML
 		- 데이터소스 => 스프링빈 이용 가능
 		- 트랜잭션 => 스프링빈 이용 가능
@@ -201,7 +201,7 @@
 	- 매핑 정보 XML
 		- SQL문
 		- 자바 오브젝트
-- 스프링에서는 SqlMapClient를 받아 사용할 수 있는 SqlMapClientTemplate를 제공
+- 스프링에서는 SqlMapClient 를 받아 사용할 수 있는 SqlMapClientTemplate 를 제공
 - SqlMapClientDaoSupport 제공
 
 ### JPA
@@ -209,7 +209,7 @@
 - 영속성 관리와 O/R 매핑을 위한 표준 기술
 - 오브젝트 중심인 언어에서의 불푠함 해소
 - EntityManager 핵심 인터페이스
-- EntityManagerFactory로 생성 가능(팩토리빈)
+- EntityManagerFactory 로 생성 가능(팩토리빈)
 	- LocaleEntityManagerFactoryBean => 권장하지 않음
 	- Java EE에서 제공하는 JPA Provider(JNDI)
 	- 스프링에서 제공하는 LocalContainerEntityManagerFactoryBean
@@ -436,7 +436,7 @@
 			- application/atom+xml 과 application/rss+xml 타입의 피드 문서 생성
 	
 		- XsltView, TilesView, AbstractJasperReportsView
-			- xslt 변환을 이용한 뷰 생성, Tiles 뷰 생성, 리포트 작성용 프레임워크인 JasperReports를 이용해 CSV, HTML, PDF, Excel 작성.
+			- xslt 변환을 이용한 뷰 생성, Tiles 뷰 생성, 리포트 작성용 프레임워크인 JasperReports 를 이용해 CSV, HTML, PDF, Excel 작성.
 	
 		- MappingJacksonJsonView
 			- JSON 타입의 콘텐트를 작성해주는 뷰
@@ -446,3 +446,60 @@
 		- ViewResolver 인터페이스를 구현해야 한다.
 		- InternalResourceViewResolver
 			- 뷰 리졸버를 지정하지 않았을 때, 자동등록되는 디폴트 뷰 리졸버
+			
+		- VelocityViewResolver, FreeMarkerViewResolver
+			- ~~Configurer 경로 지정해줘야한다.
+		
+		- ResourceBundleViewResolver, XmlViewResolver, BeanNameViewResolver
+			- 여러 가지 종류의 뷰를 혼용하거나 뷰의 종류를 코드 밖에서 변경해줘야 하는 경우 사용
+			- ResourceBundleViewResolver 는 클래스패스의 views.properties 를 찾아 사용한다.
+			- XmlViewResolver 은 /WEB-INF/views.xml 를 찾아 사용한다.
+			- BeanNameViewResolver 은 뷰 이름과 동일한 빈 이름을 가진 빈을 찾아서 뷰로 사용하게 된다.
+			
+		- ContentNegotiatingViewResolver
+			- 스프링 3.0에서 추가된 뷰 리졸버
+			- 뷰 리졸버를 결정해주는 리졸버
+			- 미디어 타입 결정
+				1. URL 의 확장자를 사용하는 방법
+				2. favorParameter = true, format 파라미터 이용
+				3. ignoreAcceptHeader = false, Accept 해더 이용
+				4. defaultContentType 이용
+			- 뷰 리졸버 위임을 통한 후보 뷰 선정
+				- viewResolvers 로 사용할 뷰 리졸버 지정
+			- 미디어 타입 비교를 통한 최종 뷰 선정
+				- 미디어 타입과 뷰 리졸버에서 찾은 후보 뷰 목록을 매칭해서 뷰 결정
+				
+- 기타 전략
+	- 핸들러 예외 리졸버 ( HandlerExceptionResolver )
+		- 해당 리졸버가 등록되어 있다면, web.xml 에 `<error-page>`를 등록한 것 보다 우선적으로 처리된다.
+		- HandlerExceptionResolver 인터페이스를 구현해야 한다.
+		- 기본적으로 4개의 전략을 제공한다. ( 3개는 기본적으로 등록되어 있다. )
+			- AnnotationMethodHandlerExceptionResolver
+				- 특정 Exception 에 대해 특별한 처리가 필요한 경우
+				- @ExceptionHandler 사용
+				
+			- ResponseStatusExceptionResolver
+				- HTTP 500 에러 대신 의미 있는 HTTP 응답 상태 값을 보여주는 것
+				- @ResponseStatus 사용
+				
+			- DefaultHandlerExceptionResolver
+				- 스프링 내부적으로 발생하는 주요 예외를 처리해주는 표준 예외처리 로직
+			
+			- SimpleMappingExceptionResolver
+				- web.xml 에 `<error-page>`와 비슷하게 예를 처리할 뷰를 지정할 수 있게 해준다.
+	
+	- 지역정보 리졸버 ( LocaleResolver )
+		- 지역정보를 결정하는 전략
+		- 브라우저의 기본 설정따라 보내지는 AcceptHeaderLocaleResolver 를 디폴트로 사용된다.
+		- 사용자가 직접 변경하도록 만드려면 SessionLocaleResolver 나 CookieLocaleResolver 를 사용한다.
+		
+	- 멀티파트 리졸버 ( CommonsMultipartResolver )
+		- 파일 업로드와 같이 멀티파트 포맷의 요청정보를 처리하는 전략 설정
+		- apapche commons의 fileUpload만 지원한다.
+		- 디폴트로 등록되는 것이 없다.
+		- 과다한 크기의 파일 업로드를 막기 위해 maxUploadSize 프로퍼티를 설정하도록 권장한다.
+		
+	- RequestToViewNameTranslator
+		- 뷰 이름이나 뷰 오브젝트를 돌려주지 않았을 경우 HTTP 요청정보를 참고하여 뷰 이름을 생성해주는 로직을 담고 있다.
+		- DefaultRequestToViewNameTranslator 가 기본적으로 등록되어 있다.
+			- URL 을 기준으로 해서 뷰 이름을 결정
