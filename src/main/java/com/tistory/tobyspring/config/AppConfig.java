@@ -1,15 +1,14 @@
 package com.tistory.tobyspring.config;
 
 import com.tistory.tobyspring.context.Hello;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-//@Configuration
-//@ComponentScan(basePackages = "com.tistory.tobyspring"
-//            , excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = AppConfig.class)
-//)
+@Configuration
 public class AppConfig {
 
-//    @Bean
-    public Hello hello() {
-        return new Hello();
-    }
+	@Bean
+	public Hello hello() {
+		return new Hello();
+	}
 }

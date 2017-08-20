@@ -1,73 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         version="2.5">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
 
 	<!--
-
-	서버에서 동작하는 애플리케이션
-	1. 웹 모듈 안에 컨테이너를 두는 방법
-	- 독립적으로 배치 가능한 웹 모듈(war) 형태로 애플리케이션
-	- 웹 애플리케이션은 여러 개의 서블릿을 가질 수 있다.
-	- 몇 개의 서블릿이 중앙집중식으로 모든 요청을 다 받아서 처리하는 방식 => 프론트 컨트롤러 패턴
-	2. 엔터프라이즈 애플리케이션 레벨에 두는 방법
-
-	=> 일반적으로는 두가지 방식을 모두 사용해 컨테이너를 만든다.
-	=> 두 개의 컨테이너, 즉 WebApplicationContext가 만들어진다.
-	=> 두개의 서블릿이 하나의 웹 애플리케이션에서 사용되는 경우, 두 서블릿의 컨텍스트에서 공통적으로 사용하는 별도의 컨텍스트를 만들어준다.
-
-	-->
-
-	<!--
-
-	루트 애플리케이션 컨텍스트 등록
-
-	=> 루트 웹 애플리케이션 컨텍스트를 등록하는 가장 간단한 방법은 서블릿의 이벤트 리스너를 이용하는 것이다.
-	=> 스프링은 웹 애플리케이션의 시작과 종료 시 발생하는 이벤트를 처리하는 리스너인 ServletContextListener를 이용한다.
-
-	※ ServletContextListener 인터페이스를 구현한 리스너는 DB 연결 기능이나 로깅 같은 서비스를 만드는 데 유용하다.
-
-	=> 스프링은 이런 기능을 가진 ContextLoaderListener를 제공한다.
 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-
-
-	AnnotationConfigWebApplicationContext 경우, annotation-config가 기본적으로 추가되기 때문에 별도의 설정을 하지 않아도 된다.
-	<context-param>
-		<param-name>contextClass</param-name>
-		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-	</context-param>
-
-	-->
-
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-
-	<!--
-
-	 리스너가 만들어주는 컨텍스트는 기본적으로 다음의 값을 적용한다.
-	 * 애플리케이션 컨텍스트 클래스 : XmlWebApplicationContext
-	 * XML 설정파일 위치 : /WEB-INF/applicationContext.xml
-
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
-			/WEB-INF/applicationContext.xml = classpath:/WEB-INF/applicationContext.xml
-		</param-value>
-
-		 /WEB-INF/*Context.xml -> Context.xml로 끝나는 파일
-		 /WEB-INF/**/*Context.xml -> 모든 서브 폴더에 Context.xml로 끝나는 파일
-	</context-param>
-
-	 <context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>com.tistory.tobyspring.config</param-value>
-		패키지내에 모든 @Configuration 클래스를 지정
-	 </context-param>
-	 -->
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
@@ -76,24 +16,28 @@
 		</param-value>
 	</context-param>
 
+	-->
+
 	<!--
 
-	서블릿 애플리케이션 컨텍스트 등록
-	* 스프링의 웹 기능을 지원하는 프론트 컨트롤러 서블릿은 DispatcherServlet이다.
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+	</context-param>
 
-	1. servlet-name
-	  - 독립적인 네임스페이스를 갖게 된다.
-	  - 서블릿 단위로 만들어지는 컨텍스트를 구분하는 키가 된다.
-	  - 서블릿 이름 뒤에 '-servlet'을 붙여서 만든다.
-	  - 설정파일은 '/WEB-INF/{서블릿 네임스페이스}-servlet.xml' 규칙으로 만들어진다.
+	 <context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>com.tistory.tobyspring.config</param-value>
+	 </context-param>
+	 -->
 
-	2. load-on-startup
-	  - 서블릿 컨테이너가 등록된 서블릿을 언제 만들고 초기화할지, 또 그 순서가 어떻게 되는지를 지정하는 정수 값이다.
-	  - 작은 수를 가진 서블릿이 우선적으로 만들어진다.
+	<!--
+
 
 	<servlet>
 		<servlet-name>spring</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+
 		<init-param>
 			<param-name>contextClass</param-name>
 			<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
@@ -102,19 +46,16 @@
 			<param-name>contextConfigLocation</param-name>
 			<param-value>com.tistory.tobyspring.config.WebConfig</param-value>
 		</init-param>
+
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
-	-->
-
-	<servlet>
-		<servlet-name>spring</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>spring</servlet-name>
 		<url-pattern>/app/*</url-pattern>
 	</servlet-mapping>
+
+	-->
+
 </web-app>

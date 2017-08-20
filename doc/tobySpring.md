@@ -73,7 +73,7 @@
 #### Scope
 
 - @Scope 나 xml 속성값 scope 변경 가능하다.
-- 기본적으로 singleton 이다. ( singleton, prototyep, request, session, globalsession )
+- 기본적으로 singleton 이다. ( singleton, prototype, request, session, globalsession )
 - prototype 은 오브젝트 중심 아키텍처에 적합(?)할 수 있다.
 - session 은 DL 방식으로는 Provider 나 ObjectFactory 에 넣어두고 사용할 수 있다. DI 방식으로는 프록시 설정을 변경하여 사용할 수 있다.
 
@@ -495,7 +495,7 @@
 		
 	- 멀티파트 리졸버 ( CommonsMultipartResolver )
 		- 파일 업로드와 같이 멀티파트 포맷의 요청정보를 처리하는 전략 설정
-		- apapche commons의 fileUpload만 지원한다.
+		- apapche commons 의 fileUpload 만 지원한다.
 		- 디폴트로 등록되는 것이 없다.
 		- 과다한 크기의 파일 업로드를 막기 위해 maxUploadSize 프로퍼티를 설정하도록 권장한다.
 		
@@ -503,3 +503,23 @@
 		- 뷰 이름이나 뷰 오브젝트를 돌려주지 않았을 경우 HTTP 요청정보를 참고하여 뷰 이름을 생성해주는 로직을 담고 있다.
 		- DefaultRequestToViewNameTranslator 가 기본적으로 등록되어 있다.
 			- URL 을 기준으로 해서 뷰 이름을 결정
+			
+- 스프링 3.1의 MVC
+	- 플래시 맵 매니저 전략
+		- 플래시 맵
+			- 플래시 애트리뷰트를 저장하는 맵
+			- 플래시 애트리뷰트는 다음 요청에서 한 번 사용되고 바로 제거됨
+			- Post/Redirect/Get 패턴
+			- URL 조건과 제한시간을 지정 가능
+		
+		- 플래시 맵 매니저
+			- 플래시 맵을 저장하고, 유지하고, 조회하고, 제거하는 등의 작업을 담당하는 오브젝트
+			- FlashMapManager 인터페이스 구현
+		
+		- 플래시 맵 매니저 전략
+			- 플래시 맵 정보는 HTTP 세션을 이용하여 저장된다. ( SessionFlashMapManager )
+			
+	- WebApplicationInitializer 를 이용한 컨텍스트 등록
+		- WAS 의 서블릿 컨테이너가 서블릿 3.0이나 그 이상을 지원하지 않는다면 사용 불가능
+		- web.xml 탈피, 설정 방식을 모듈화 관리 가능
+		- 스프링 3.1에서는 ServletContainerInitializer 이용
