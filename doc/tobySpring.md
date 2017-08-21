@@ -504,22 +504,49 @@
 		- DefaultRequestToViewNameTranslator 가 기본적으로 등록되어 있다.
 			- URL 을 기준으로 해서 뷰 이름을 결정
 			
-- 스프링 3.1의 MVC
+### 스프링 3.1의 MVC
+- 플래시 맵 매니저 전략
+	- 플래시 맵
+		- 플래시 애트리뷰트를 저장하는 맵
+		- 플래시 애트리뷰트는 다음 요청에서 한 번 사용되고 바로 제거됨
+		- Post/Redirect/Get 패턴
+		- URL 조건과 제한시간을 지정 가능
+	
+	- 플래시 맵 매니저
+		- 플래시 맵을 저장하고, 유지하고, 조회하고, 제거하는 등의 작업을 담당하는 오브젝트
+		- FlashMapManager 인터페이스 구현
+	
 	- 플래시 맵 매니저 전략
-		- 플래시 맵
-			- 플래시 애트리뷰트를 저장하는 맵
-			- 플래시 애트리뷰트는 다음 요청에서 한 번 사용되고 바로 제거됨
-			- Post/Redirect/Get 패턴
-			- URL 조건과 제한시간을 지정 가능
+		- 플래시 맵 정보는 HTTP 세션을 이용하여 저장된다. ( SessionFlashMapManager )
 		
-		- 플래시 맵 매니저
-			- 플래시 맵을 저장하고, 유지하고, 조회하고, 제거하는 등의 작업을 담당하는 오브젝트
-			- FlashMapManager 인터페이스 구현
-		
-		- 플래시 맵 매니저 전략
-			- 플래시 맵 정보는 HTTP 세션을 이용하여 저장된다. ( SessionFlashMapManager )
-			
-	- WebApplicationInitializer 를 이용한 컨텍스트 등록
-		- WAS 의 서블릿 컨테이너가 서블릿 3.0이나 그 이상을 지원하지 않는다면 사용 불가능
-		- web.xml 탈피, 설정 방식을 모듈화 관리 가능
-		- 스프링 3.1에서는 ServletContainerInitializer 이용
+- WebApplicationInitializer 를 이용한 컨텍스트 등록
+	- WAS 의 서블릿 컨테이너가 서블릿 3.0이나 그 이상을 지원하지 않는다면 사용 불가능
+	- web.xml 탈피, 설정 방식을 모듈화 관리 가능
+	- 스프링 3.1에서는 ServletContainerInitializer 이용
+	
+## @MVC
+
+### @RequestMapping
+
+- DefaultAnnotationHandlerMapping 등록
+- @RequestMapping
+	- value : URL 패턴
+	- method : HTTP 요청 메소드
+	- params : 요청 파라미터
+	- headers : HTTP 헤더
+
+- 타입 레벨 매핑과 메소드 레벨 매핑의 결합
+	- 타입(클래스나 인터페이스) 레벨에 붙은 @RequestMapping 은 타입 내의 모든 매핑용 메소드의 공통 조건을 지정할 때 사용
+
+- 메소드 레벨 단독 매핑
+
+- 타입 레벨 단독 매핑
+
+- 타입 상속과 매핑
+	- @RequestMapping 정보는 상속된다.
+	- 매핑정보 상속의 종류
+		1. 상위 타입과 메소드의 상속
+		2. 상위 타입과 하위 타입 메소드 결합
+		3. 하위 타입과 메소드의 재정의
+		4. 서브클래스 메소드의 URL 패턴 없는 재정의
+		5. 제네릭스와 매핑정보 상속을 이용한 컨트롤러 작성
