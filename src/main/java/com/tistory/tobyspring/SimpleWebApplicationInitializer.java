@@ -29,6 +29,7 @@ public class SimpleWebApplicationInitializer implements WebApplicationInitialize
 
 	private void initServletContext(ServletContext servletContext) {
 		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+		context.scan("com.tistory.tobyspring.controller");
 		context.register(WebConfig.class);
 
 		ServletRegistration.Dynamic dispatcher = servletContext.addServlet("spring", new DispatcherServlet(context));

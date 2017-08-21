@@ -550,3 +550,50 @@
 		3. 하위 타입과 메소드의 재정의
 		4. 서브클래스 메소드의 URL 패턴 없는 재정의
 		5. 제네릭스와 매핑정보 상속을 이용한 컨트롤러 작성
+		
+### @Controller
+
+- @MVC 에 가장 강력하고 획기적인 방법
+- AnnotationMethodHandlerAdapter 사용
+- 파라미터 종류
+	- HttpServletRequest, HttpServletResponse
+	- HttpSession
+	- WebRequest, NativeWebRequest
+	- Locale
+	- InputStream, Reader
+	- OutputStream, Writer
+	- @PathVariable
+	- @RequestParam
+	- @CookieValue
+	- @RequestHeader
+	- Map, Model, ModelMap
+	- @ModelAttribute
+	- Errors, BindingResult
+	- SessionStatus
+	- @RequestBody : messageConverter
+	- @Value
+	- @Valid : JSR-303
+
+- 리턴 타입 종류
+	- ModelAndView
+	- String
+	- void
+	- 모델 오브젝트
+	- Map, Model, ModelMap
+	- View
+	- @ResponseBody
+	
+- @SessionAttributes 와 SessionStatus
+	- 데이터 유지
+	- 필요성 이유
+		1. 히든 필드
+		2. DB 재조회
+		3. 계층 사이의 강한 결합
+	
+	- @SessionAttributes
+		- 기본적으로 HttpSession 이용
+		- @ModelAttribute 로 해당 오브젝트를 가져올 수 있다.
+	
+	- SessionStatus
+		- 세션 제거
+		
