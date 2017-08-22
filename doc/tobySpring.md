@@ -597,3 +597,116 @@
 	- SessionStatus
 		- 세션 제거
 		
+### 모델 바인딩과 검증
+
+- @Controller 에서 @ModelAttribute 가 지정된 파라미터를 가져올 때 3가지 과정을 거친다.
+	1. 파타미터 타입의 오브젝트를 만든다.
+	2. 준비된 오브젝트의 파라미터에 웹 파라미터를 바인딩 해준다.
+	3. 모델의 값을 검증하는 것이다.
+	
+- 바인딩
+	1. XML 설정 파일을 사용하여 빈을 정의할 경우
+	2. HTTP 을 통해 전달되는 클라이언트의 요청을 모델 오브젝트로 변환할 경우
+
+- PropertyEditor
+	- 기본적으로 제공하는 바인딩 타입 변환 API
+	- 자바빈 표준에 정의된 인터페이스
+	- `org.springframework.beans.propertyeditors` 패키지에 구현되어 있음
+	- PropertyEditorSupport 으로 간단하게 구현
+	
+- @InitBinder
+	- HTTP 요청 파라미터가 적절히 변환돼서 들어가도록 만드는 것
+	- AnnotationMethodHandlerAdapter 는 애노테이션에 바인딩 해줄 때, WebDataBinder 를 만든다.
+	
+- WebBindingInitializer
+	- 바인딩이 애플리케이션 전반에 걸쳐 폭넓게 필요한 경우
+	
+- 프로토타입 빈 프로퍼티 에디터
+	- 프로퍼티 에디터는 thread safe 하지 못 하다.
+	- 방법
+		1. 별도의 codeId 필드로 바인딩
+		2. 모조 오브젝트 프로퍼티 에디터
+		3. 프로토타입 도메인 오브젝트 프로퍼티 에디터
+		
+- Converter 와 Formatter
+	- Converter
+		- 단방형 변환만 지원
+	
+	- ConversionService
+		- 컨트롤러 바인딩
+		- 보통은 GenericConversionService 클래스 빈을 사용하면 된다.
+			- 다양한 타입 변환 기능을 가진 오브젝트를 등록할 수 있도록 ConverterRegistry 인터페이스 제공
+			- WebDataBinder 에 GenericConversionService 를 설정하는 방법
+				1. @InitBinder 수동 등록
+				2. ConfigurableWebBindingInitializer 를 이용한 일괄 등록
+				
+	- Formatter 와 FormattingConversionService
+		- 범용적인 타입 변환 API
+		- FormattingConversionServiceFactoryBean
+			- 기본적으로 등록되는 Formatter
+				1. @NumberFormat
+				2. @DateTimeFormat
+	
+	- 바람직한 활용 전략
+		- 사용자 정의 타입의 바인딩을 위한 일괄 적용 : Converter
+		- 필드와 메소드 파라미터, 애노테이션 등의 메타정보를 활용하는 조건부 변환 기능 : ConditionGenericConverter
+		- 애노테이션 정보를 활용한 HTTP 요청과 모델 필드 바인딩 : AnnotationFormatterFactory 와 Formatter
+		- 특정 필드에만 적용되는 변환 기능 : PropertyEditor
+		
+	- WebDataBinder 설정 항목
+		- allowedFields, disallowFields : @ModelAttribute 바인딩에서 시용하고자 하는 필드 지정
+		- requiredFields : 바인딩 시, 필수로 요구되는 필드 지정
+		- fieldMarkerPrefix : 체크박스 같은 값을 히든 필드에 넣을 때, 앞에 붙이는 접두어 지정
+		- fieldDefaultPrefix : 체크박스 기본 값을 히든 필드에 넣을 때, 앞에 붙이는 접두어 지정
+		
+- Validator 와 BindingResult, Errors
+	- Validator 표준 인터페이스
+	- BindingResult 는 Errors 의 서브 인터페이스
+	- Validator
+		- 오브젝트 검증 API
+		- 동일한 타입 체크, 데이터 검증 가능
+		- ValidationUtils 유틸 클래스 존재
+		- 검증 방법
+			1. 컨트롤러 메소드 내의 코드
+			2. @Valid 이용한 자동 검증
+			3. 서비스 계층 오브젝트에서의 검증
+			4. 서비스 계층을 활용하는 Validator
+			
+	- JSR-303 빈 검증 기능
+		- LocalValidatorFactoryBean 이용
+	
+	- BindingResult 와 MessageCodeResolver
+		- BindingResult 에는 타입 변환 오류정보와 검증 작업에 발견된 검증 오류정보가 모두 저장
+		- 기본적으로 에러 메시지는 messages.properties  와 같은 프로퍼티에서 가져온다.
+		- MessageCodeResolver 를 통해 메시지 키 값으로 확장된다.
+		- 기본적으로 DefaultMessageCodeResolver 활용한다.
+	
+	- MessageSource
+		- MessageSourceResolver 를 한 번 더 거쳐 최종적인 메시지를 만든다.
+		- 구현 방법
+			1. 코드로 등록 : StaticMessageSource
+			2. 리소스 번들 방식( messages.properties ) : ResourceBundleMessageSource
+				- 일정 주기로 재갱신(재시작 안해도 됨) : ReloadableResourceBundleMessageSource 
+		
+		- 4가지 정보 활용
+			1. 코드
+			2. 메시지 파라미터 배열
+			3. 디폴트 메시지
+			4. 지역정보
+- 모델의 일생
+	- 모델은 MVC 아키텍처에서 정보를 담당하는 컴포넌트이다.
+	
+	- HTTP 요청으로부터 컨트롤러 메소드까지
+		- @ModelAttribute 메소드 파라미터
+		- @SessionAttribute 세션 저장 대상 모델 이름
+		- WebDataBinder 에 등록된 프로퍼티 에디터, 컨버전 서비스
+		- WebDataBinder 에 등록된 검증기
+		- ModelAndView 의 모델 맵
+		- 컨트롤러 메소드와 BindingResult 파라미터
+	
+	- 컨트롤러 메소드부터 뷰까지
+		- ModelAndView 의 모델 맵
+		- WebDataBinder 에 기본적으로 등록된 MessageCodeResolver
+		- 빈으로 등록된 MessageSource 와 LocaleResolver
+		- @SessionAttribute 세션 저장 대상 모델 이름
+		- 뷰의 EL 과 스프링 태그 또는 매크로
