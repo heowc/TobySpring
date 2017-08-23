@@ -710,3 +710,171 @@
 		- 빈으로 등록된 MessageSource 와 LocaleResolver
 		- @SessionAttribute 세션 저장 대상 모델 이름
 		- 뷰의 EL 과 스프링 태그 또는 매크로
+		
+### JSP 뷰와 form 태그
+
+- EL과 spring 태그 라이브러리를 이용한 모델 출력
+	- JSP/JSTL
+	
+	- JSP EL
+		- ${key} 접근
+	
+	- 스프링 SpEL
+		- JSP EL 보다 유연하고 강력한 표현식 지원
+		- spring 태그 라이브러리 추가
+			- `<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>`
+		- 표현식 작성
+			- `<spring:eval expression="{필드}.toString()" />`
+			- @NumberFormat, @DataTimeFormat 같은 포맷터 적용 가능
+	
+	- 지역화 메시지 출력
+		- 언어별 messages.properties 적용 가능, message 태그
+			- `<spring:messasge code="{key}" />`
+
+- spring 태그 라이브러리 이용한 폼 작성
+	- 단일 폼 모델
+	- <spring:bind> 와 BindingStatus
+		- 오류 출력 용이
+
+- form 태그 라이브러리
+	- <spring:bind> 보다 간결한 코드로 동일한 기능 구현
+	- 일반적인 HTML 사용 안됨
+	- `<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>`
+	- <form:form>
+		- form 태그
+		- commandName, modelAttribute
+			- 폼에 적용할 모델의 이름 지정
+		- method
+			- http method 지정
+			- 서블릿 필터로 HiddenHttpMethodFilter 추가			
+			- `<input type="hidden" name="_method" value="{method} />"`
+		- action
+ 	
+	- <form:input>
+		- input 태그
+		- path
+		- cssClass, cssErrorClass
+
+	- <form:label>
+		- label 태그
+		- <form:input> 과 동일
+
+	- <form:errors>
+		- 기본적으로 span
+		- path
+		- delimiter
+			- 복수 에러 메시지 구분자
+			- 기본적으로 <br/> 태그 사용
+		- cssClass
+
+	- <form:hidden>
+		- input hidden 태그
+
+	- <form:password>, <form:textarea>
+		- input text 태그와 textarea 태그
+		- <form:input> 과 동일
+
+	- <form:checkbox>, <form:checkboxs>
+		- input checkbox 태그
+
+	- <form:radiobutton>, <form:radiobuttons>
+		- input radiobutton 태그
+
+	- <form:select>, <form:option>, <form:options>
+		- select 태그와 option 태그
+
+### 메시지 컨버터와 AJAX
+
+- XML이나 JSON을 이용한 AJAX 기능이나 웹 서비스를 개발할 때 사용
+- 응답 본문을 메시지로 다루는 방식
+- @RequestBody 와 @ResponseBody 메시지 컨버터 적용
+- 종류
+	- AnnotationMethodHandlerAdapter 를 통해 등록
+	- 기본적으로 4가지 등록 되어진다.
+	- ByteArrayHttpMessageConverter
+		- byte[]
+		- 모든 미디어 타입 지원
+		- application/octet-stream 보내짐
+		- 바이너리 정보에 용이
+
+	- StringHttpMessageConverter
+		- String
+		- 모든 미디어 타입 지원
+		- text/plain 보내짐
+
+	- FormHttpMessageConverter
+		- application/x-www-form-urlencoded 지원
+		- MultiValueMap<String, String> 지원
+		- @ModelAttribute 가 더 편리(?)
+
+	- SourceHttpMessageConverter
+		- application/xml, application/++xml, text/xml 지원
+		- DOMSource, SAXSource, StreamSource ( javax.xml.transform.Source 인터페이스 )
+	
+
+	- Jaxb2RootElementHttpMessageConverter
+		- @XmlRootElment 와 @XmlType 이 붙은 클래스 이용
+		- SourceHttpMessageConverter 와 동일한 XML 미디어 타입 지워
+
+	- MarshallingHttpMessageConverter
+		- 스프링 OXM 추상화의 Mashaller 와 Unmarshaller 이용
+		- 미디어 타입은 다른 XML 기반 메시지 컨버터와 동일
+		- 지원할 오브젝트 만큼 등록해줘야 한다.
+
+	- MappingJacksonHttpMessageConverter
+		- Jackson ObjectMapper 이용해서 자바 오브젝트와 JSON 변환
+		- application/json 지원
+		- 자바빈 스타일 오브젝트와 HashMap 지원
+		- 날짜나 숫자는 부가적인 변환 기능 필요
+
+- JSON 을 이용한 AJAX 컨트롤러 : GET + JSON
+	- 활용 방법
+		1. MappingJacksonJsonView
+		2. @ResponseBody
+
+- JSON 을 이용한 AJAX 컨트롤러 : POST + JSON
+
+### MVC 네임스페이스
+
+- 기본적인 AnnotationMethodHandlerAdapter 활용은 부족하다.
+- mvc 스키마의 태그 활용
+	- <mvc:annotation-driven>
+		- 애노테이션 방식의 컨트롤러 사용 시, 필요한 DispatcherServlet 전략 빈 자동 등록
+		- DefaultAnnotationHandlerMapping
+			- @RequestMapping 를 이용한 핸들러 매핑 전략
+		- AnnotationMethodHandlerAdapter
+			- 디폴트 핸들러 어댑터
+			- `<mvn:annotation-driven` 사용 시, 직접적인 빈 등록하면 안됨
+		- ConfigurableWebBindingInitializer
+			- 모든 컨트롤러 메소드에 자동으로 적용되는 WebDataBinder 적용
+		- 메시지 컨버터
+			- 기본 메시지 컨버터 등록
+			- 해당 라이브러리가 존재한다면 자동적으로 등록 된다.
+		- <spring:eval>
+		- validator
+		- conversion-service
+
+	- <mvc:intercepters>
+		- HandlerInterceptor 적용
+
+	- <mvc:view-controller>
+		- 단순 뷰 지정에 용이
+
+### @MVC 확장 포인트
+
+- AnnotationMethodHandlerAdapter 확장 기능
+	- SessionAttributeStore
+	- WebArgumentResolver
+		- HTTP 요청 정보를 원하는 형태로 전달
+	- ModelAndViewResolver
+
+### URL 과 리소스 관리
+
+- 스프링 3.0.4 이후 버전 지원 기능
+- <mvc:default-servlet-handler/> 를 이용한 URL 관리
+	- 동적 리소스, 정적 리소스
+	- 정적 리소스는 낮은 순위 매핑 저략으로 포워딩
+
+- <url:resources /> 를 이용한 리소스 관리
+	- 정적 리소스 관리 용이
+	- `<mvc:resources mapping="{URL} location={PATH}"`

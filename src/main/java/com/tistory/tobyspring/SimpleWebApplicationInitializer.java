@@ -34,6 +34,6 @@ public class SimpleWebApplicationInitializer implements WebApplicationInitialize
 
 		ServletRegistration.Dynamic dispatcher = servletContext.addServlet("spring", new DispatcherServlet(context));
 		dispatcher.setLoadOnStartup(1);
-		dispatcher.addMapping("/app/*");
+		dispatcher.addMapping("/");
 	}
 }
