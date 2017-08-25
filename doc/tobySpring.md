@@ -733,54 +733,54 @@
 
 - spring 태그 라이브러리 이용한 폼 작성
 	- 단일 폼 모델
-	- <spring:bind> 와 BindingStatus
+	- `<spring:bind>` 와 BindingStatus
 		- 오류 출력 용이
 
 - form 태그 라이브러리
-	- <spring:bind> 보다 간결한 코드로 동일한 기능 구현
+	- `<spring:bind>` 보다 간결한 코드로 동일한 기능 구현
 	- 일반적인 HTML 사용 안됨
 	- `<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>`
-	- <form:form>
+	- `<form:form>`
 		- form 태그
 		- commandName, modelAttribute
 			- 폼에 적용할 모델의 이름 지정
 		- method
 			- http method 지정
-			- 서블릿 필터로 HiddenHttpMethodFilter 추가			
+			- 서블릿 필터로 HiddenHttpMethodFilter 추가
 			- `<input type="hidden" name="_method" value="{method} />"`
 		- action
  	
-	- <form:input>
+	- `<form:input>`
 		- input 태그
 		- path
 		- cssClass, cssErrorClass
 
-	- <form:label>
+	- `<form:label>`
 		- label 태그
-		- <form:input> 과 동일
+		- `<form:input>` 과 동일
 
-	- <form:errors>
+	- `<form:errors>`
 		- 기본적으로 span
 		- path
 		- delimiter
 			- 복수 에러 메시지 구분자
-			- 기본적으로 <br/> 태그 사용
+			- 기본적으로 br 태그 사용
 		- cssClass
 
-	- <form:hidden>
+	- `<form:hidden>`
 		- input hidden 태그
 
-	- <form:password>, <form:textarea>
+	- `<form:password>`, `<form:textarea>`
 		- input text 태그와 textarea 태그
-		- <form:input> 과 동일
+		- `<form:input>` 과 동일
 
-	- <form:checkbox>, <form:checkboxs>
+	- `<form:checkbox>`, `<form:checkboxs>`
 		- input checkbox 태그
 
-	- <form:radiobutton>, <form:radiobuttons>
+	- `<form:radiobutton>`, `<form:radiobuttons>`
 		- input radiobutton 태그
 
-	- <form:select>, <form:option>, <form:options>
+	- `<form:select>`, `<form:option>`, `<form:options>`
 		- select 태그와 option 태그
 
 ### 메시지 컨버터와 AJAX
@@ -810,7 +810,7 @@
 	- SourceHttpMessageConverter
 		- application/xml, application/++xml, text/xml 지원
 		- DOMSource, SAXSource, StreamSource ( javax.xml.transform.Source 인터페이스 )
-	
+
 
 	- Jaxb2RootElementHttpMessageConverter
 		- @XmlRootElment 와 @XmlType 이 붙은 클래스 이용
@@ -838,7 +838,7 @@
 
 - 기본적인 AnnotationMethodHandlerAdapter 활용은 부족하다.
 - mvc 스키마의 태그 활용
-	- <mvc:annotation-driven>
+	- `<mvc:annotation-driven>`
 		- 애노테이션 방식의 컨트롤러 사용 시, 필요한 DispatcherServlet 전략 빈 자동 등록
 		- DefaultAnnotationHandlerMapping
 			- @RequestMapping 를 이용한 핸들러 매핑 전략
@@ -850,14 +850,14 @@
 		- 메시지 컨버터
 			- 기본 메시지 컨버터 등록
 			- 해당 라이브러리가 존재한다면 자동적으로 등록 된다.
-		- <spring:eval>
+		- `<spring:eval>`
 		- validator
 		- conversion-service
 
-	- <mvc:intercepters>
+	- `<mvc:intercepters>`
 		- HandlerInterceptor 적용
 
-	- <mvc:view-controller>
+	- `<mvc:view-controller>`
 		- 단순 뷰 지정에 용이
 
 ### @MVC 확장 포인트
@@ -871,10 +871,76 @@
 ### URL 과 리소스 관리
 
 - 스프링 3.0.4 이후 버전 지원 기능
-- <mvc:default-servlet-handler/> 를 이용한 URL 관리
+- `<mvc:default-servlet-handler/>` 를 이용한 URL 관리
 	- 동적 리소스, 정적 리소스
 	- 정적 리소스는 낮은 순위 매핑 저략으로 포워딩
 
 - <url:resources /> 를 이용한 리소스 관리
 	- 정적 리소스 관리 용이
-	- `<mvc:resources mapping="{URL} location={PATH}"`
+	- `<mvc:resources mapping="{URL} location={PATH}">`
+
+### 스프링 3.1의 @MVC
+
+- 새로운 RequestMapping 전략
+	- DispatcherServlet 전략 클래스 변경
+		- 유연한 확정성을 가질 수 있도록 개선
+		
+	- @RequestMapping 메소드와 핸드러 매핑 전략의 불일치
+	- HandleMethod : @RequestMapping이 붙은 메소드의 정보를 추상화한 오브젝트 타입
+		- 빈 오브젝트
+		- 메소드 메타정보
+		- 메소드 파라미터 메타정보
+		- 메소드 애노테이션 메타정보
+		- 메소드 리턴 값 메타정보
+	- @RequestMapping 전략 선택
+		- 3.1 이후에는 자바 코드를 이용한 @MVC 방식 권장
+	
+- @RequestMapping 핸들러 매핑 : RequestMappingHandlerMapping
+	- 요청 조건
+		- 3.0 : URL, 패턴, 메소드, 파라미터, HTTP 헤더
+		- 3.1 : (3.0) + Content-Type 헤더, Accept 헤더
+	- 요청 조건의 결합방식
+		- URL 패턴 : PatternsRequestCondition
+		- HTTP 요청 방법 : RequestMethodsRequestCondition
+		- 파라미터 : ParamsRequestCondition
+		- 헤더 : HeaderRequestCondition
+		- Content-Type 헤더 : ConsumesRequestCondition
+		- Accept-Type 헤더 : ProducesRequestCondition
+		
+- @RequestMapping 핸들러 어댑터
+	- 파라미터 타입
+		- @Validated/@Valid
+			- JSR-303 검증 : @Valid
+			- 제약 조건에 대한 그룹 지정 : @Validated
+		- @Valid와 @RequestBody
+			- 예외를 따로 처리하지 않으면 MethodArgumentNotValidException 발생. 400 Bad Request
+		- UriComponentsBuilder
+			- URI/URL 정보를 추상화한 UriComponents 빌더 클래스
+		- RedirectAttributes와 리다이렉트 뷰
+			- 기존 데이터 제거에 대한 번거로움
+			- Model의 서브타입
+		- RedirectAttributes와 플래시 애트리뷰트
+	- 확장 포인트
+		- 파라미터
+		- 리턴 값
+		
+- @EnableWebMvc와 WebMvcConfigurationSupport를 이용한 @MVC 설정
+	- `<mvc:annotation-config/>` 와 @EnableWebMvc 동일
+	- 빈 설정자 : @Enable 전용 애노테이션의 설정을 위해 사용되는 빈 컨피규어러
+	- @EnableWebMvc의 빈 설정자 : WebMvcConfigurationSupport
+		- addFormatters : FormmatterRegistry를 이용한 포매터 등록
+		- configureMessageConverters : 기본 메시지컨버터를 무시하고 재구성
+		- getValidated : LocalValidatorFactoryBean을 대체할 검증 프레임워크 재구성
+		- addArgumentResolvers : 파라미터 처리용 확장
+		- addReturnValueHandlers : 리턴 값 처리용
+		- configureHandlerExceptionResolvers : 핸들러 예외 전략 재구성
+		- addInterceptors : 인터셉터 등록 (HandleInterceptor, WebRequestInterceptor)
+		- addViewControllers : 간단한 컨트롤러 등록 메소드
+		- addResourceHandlers : `<mvc:resources/>` 담당 메소드
+		- configureDefaultServletHandling : `<mvc:default-servlet-handler/>` 담당 메소드
+	- 빈 등록 방법
+		1. @EnableWebMvc 와 WebMvcConfigurer 구현 클래스 Bean 등록
+		2. @EnableWebMvc에 WebMvcConfigurer 구현
+		3. @EnableWebMvc에 WebMvcConfigurerAdapter 구현	
+	- 전략용 설정 빈 등록
+		- InternalResoureceViewResolver 빈 등록
