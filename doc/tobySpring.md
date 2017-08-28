@@ -1028,7 +1028,7 @@
 	- 충분한 테스트를 작성해야한다.
 	- 포인트컷 적용 대상을 제대로 확인한다.
 
-#### AspectJ와 @Configuration
+### AspectJ와 @Configuration
 
 - AspectJ AOP
 	- 가장 강력한 AOP 프레임워크
@@ -1040,15 +1040,50 @@
 	- autowire 옵션 추가
 	- @Autowired 설정
 
-#### 로드타임 위버(LTW)
+### 로드타임 위버(LTW)
 
 - 활용
 	1. @Configurable 지원
 	2. 트랜잭션 AOP를 AspectJ로 지원
 	3. JPA 로드타임 위버 사용
 
-#### 스프링 3.1의 AOP와 LTW
+### 스프링 3.1의 AOP와 LTW
 
 - AOP와 LTW를 위한 애노테이션
 	- @EnableAspectJAutoProxy
 	- @EnableLoadTimeWeaving
+
+## 테스트 컨텍스트 프레임워크
+
+### 테스트 컨텍스트 프레임워크
+
+- 테스트 프레임워크와 컨텍스트 테스트
+	- 테스트용 애플리케이션 컨텍스트 캐싱과 설정파일
+		- 테스트에 사용하는 컨텍스트를 캐싱해서 여러 테스트에서 하나의 켄텍스트를 공유할 수 있는 방법을 제공한다.
+		- @RunWith을 사용함으로써, JUnit 테스트를 실행하는 Runner를 변경해준다.
+		- @ContextConfiguration을 사용함으로써, 동일한 설정파일을 지정해준다.
+
+	- 컨텍스트 설정의 상속과 컨텍스트 로더
+		- JUnit 4 장점을 살려서 상속 구조를 만들 수도 있고 슈퍼클래스의 설정을 무시할 수 도 있다.
+
+- 테스트 코드의 테스트 컨텍스트 활용
+	- @DirtiesContext
+
+### 트랜잭션 지원 테스트
+
+- 테스트의 트랜잭션 지원 필요성
+	- DAO 단독 테스트(JPA, Hibernate)
+	- 롤백 테스트
+
+- 트랜잭션 지원 테스트 작성 방법
+	- 트랜잭션 매니저
+	```text
+	@Autowired PlatformTransactionManager transactionManager;
+	```
+	- @Transactional 테스트
+
+### 스프링 3.1의 컨텍스트 테스트 프레임워크
+
+- 자바 코드 설정정보와 프로파일 활용
+	- @Configuration 클래스 테스트
+	- @ActiveProfile
