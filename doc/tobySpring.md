@@ -1,4 +1,4 @@
- 
+
 ## Application Context
 
 ### 종류
@@ -51,104 +51,99 @@
 
 ### Bean
 
-#### 빈 등록 방법
+- 빈 등록 방법
+	1. `<bean>`
+		- 가장 처음 접할 때 바람직한 방법 중 하나 이다.
+		- 자주 사용하는 기술이라면, bean 태그 대신 간결한 커스텀 태그를 만드는 것이 좋다.
 
-1. bean 태그
-	- 가장 처음 접할 때 바람직한 방법 중 하나 이다.
-	- 자주 사용하는 기술이라면, bean 태그 대신 간결한 커스텀 태그를 만드는 것이 좋다.
+	2. 자동인식을 이용한 빈 등록
+		- 스프링의 빈 스캐너는 지정된 클래스패스 아래에 있는 모든 패키지의 클래스를 대상으로 필터를 적용하여 빈 등록을 위한 클래스들을 선별해낸다.
+		- 디폴트 필터에 적용되는 애노테이션을 스프링에서는 스테레오타입 애노테이션이라고 부른다 ( @Component, @Service, @Repository, ... )
+		- XML 을 이용한 빈 스캐너 등록 ( 빈 스캐너를 내장한 애플리케이션 컨텍스트 사용 )
 
-2. 자동인식을 이용한 빈 등록
-	- 스프링의 빈 스캐너는 지정된 클래스패스 아래에 있는 모든 패키지의 클래스를 대상으로 필터를 적용하여 빈 등록을 위한 클래스들을 선별해낸다.
-	- 디폴트 필터에 적용되는 애노테이션을 스프링에서는 스테레오타입 애노테이션이라고 부른다 ( @Component, @Service, @Repository, ... )
-	- XML 을 이용한 빈 스캐너 등록 ( 빈 스캐너를 내장한 애플리케이션 컨텍스트 사용 )
-
-		```xml
-		<context:component-scan base-package="com.tistory.tobyspring" />
-		```
+			```xml
+			<context:component-scan base-package="com.tistory.tobyspring" />
+			```
 
 3. @Configuration 클래스의 @Bean 메소드
 	- 컴파일러나 IDE를 통한 타입 검증이 가능하다.
 	- 이해하기 쉽다.
 
-#### Scope
+- Scope
+	- @Scope 나 xml 속성값 scope 변경 가능하다.
+	- 기본적으로 singleton 이다. ( singleton, prototype, request, session, globalsession )
+	- prototype 은 오브젝트 중심 아키텍처에 적합(?)할 수 있다.
+	- session 은 DL 방식으로는 Provider 나 ObjectFactory 에 넣어두고 사용할 수 있다. DI 방식으로는 프록시 설정을 변경하여 사용할 수 있다.
 
-- @Scope 나 xml 속성값 scope 변경 가능하다.
-- 기본적으로 singleton 이다. ( singleton, prototype, request, session, globalsession )
-- prototype 은 오브젝트 중심 아키텍처에 적합(?)할 수 있다.
-- session 은 DL 방식으로는 Provider 나 ObjectFactory 에 넣어두고 사용할 수 있다. DI 방식으로는 프록시 설정을 변경하여 사용할 수 있다.
+- Meta 정보
+	- 식별자 ( id, name 을 이용 )
+		- name 경우, 별칭처럼 사용하여 다양하게 참조될 수 있다.
 
-#### Meta 정보
+	- 초기화 메소드
 
-- 식별자 ( id, name 을 이용 )
-	- name 경우, 별칭처럼 사용하여 다양하게 참조될 수 있다.
+		1. InitializingBean 구현
+		2. xml 속성값 init-method 지정   
+		3. __@PostConstruct__
+		4. @Bean(initMethod)
 
-- 초기화 메소드
+	- 제거 메소드
 
-	1. InitializingBean 구현
-	2. xml 속성값 init-method 지정   
-	3. __@PostConstruct__
-	4. @Bean(initMethod)
-   
-- 제거 메소드
+	   1. DisposableBean 구현
+	   2. xml 속성값 destroy-method 지정
+	   3. __@PreDestroy__
+	   4. @Bean(destroyMethod)
 
-   1. DisposableBean 구현
-   2. xml 속성값 destroy-method 지정
-   3. __@PreDestroy__
-   4. @Bean(destroyMethod)
-   
-#### Bean 종류
+- Bean 종류
+	- 애플리케이션 로직 빈
+		- 비즈니스 로직을 담당하는 빈
+	- 애플리케이션 인프라 빈
+		- 스프링에서 제공하지 않는 부분을 빈으로 만드는 것
+		- ex) DataSource, DataSourceTransactionManager
+	- 컨테이너 인프라 빈
+		- 빈 등록&생성, 환경설정, 초기화
+		- @PostConstruct
 
-- 애플리케이션 로직 빈 
-	- 비즈니스 로직을 담당하는 빈
-- 애플리케이션 인프라 빈 
-	- 스프링에서 제공하지 않는 부분을 빈으로 만드는 것
-	- ex) DataSource, DataSourceTransactionManager
-- 컨테이너 인프라 빈
-	- 빈 등록&생성, 환경설정, 초기화
-	- @PostConstruct
+			> @Configuration, @Bean, @PostConstruct 은 스프링 기본 스펙이 아니다.
+				빈 후처리기에 의해 등록 되는 것이기 때문에, 빈 후처리기를 등록해주는 <context:annotation-config /> 를 추가해줘야 한다.
+				만약 <context:component-config basepackages="..." /> 를 등록해줬다면, component scan 과정에서 annotation-config 에서
+				등록해주는 빈을 등록 해주기 때문에 <context:annotation-config /> 를 생략해도 된다.
 
-		> @Configuration, @Bean, @PostConstruct 은 스프링 기본 스펙이 아니다.
-			빈 후처리기에 의해 등록 되는 것이기 때문에, 빈 후처리기를 등록해주는 <context:annotation-config /> 를 추가해줘야 한다.
-			만약 <context:component-config basepackages="..." /> 를 등록해줬다면, component scan 과정에서 annotation-config 에서 
-			등록해주는 빈을 등록 해주기 때문에 <context:annotation-config /> 를 생략해도 된다.
+		- @ComponentScan, @Import, @ImportResource, @Enable~~
 
-	- @ComponentScan, @Import, @ImportResource, @Enable~~
-
-#### 런타임 환경 추상화
-
-- bean 태그에 profile 적용
-- 활성화 profile 적용방법
-	- WAS 레벨 : JVM Option에 `-Dspring.profiles.active={profile}`
-	- servlet 레벨
-		```xml
-		<webapp>
-			<!-- ... -->
-			<context-param>
-				<param-name>spring.profiles.active</param-name>
-				<param-value>{profile}</param-value>
-			</context-param>
-
-			<servlet>
+- 런타임 환경 추상화
+	- bean 태그에 profile 적용
+	- 활성화 profile 적용방법
+		- WAS 레벨 : JVM Option에 `-Dspring.profiles.active={profile}`
+		- servlet 레벨
+			```xml
+			<webapp>
 				<!-- ... -->
-				<init-param>
+				<context-param>
 					<param-name>spring.profiles.active</param-name>
 					<param-value>{profile}</param-value>
-				</init-param>
+				</context-param>
+
+				<servlet>
+					<!-- ... -->
+					<init-param>
+						<param-name>spring.profiles.active</param-name>
+						<param-value>{profile}</param-value>
+					</init-param>
+					<!-- ... -->
+				</servlet>
 				<!-- ... -->
-			</servlet>
-			<!-- ... -->
-		</webapp>
-		```
-	- bean 레벨 : `<beans profile={profile}` , `@Profile("{profile}")`
+			</webapp>
+			```
+		- bean 레벨 : `<beans profile={profile}` , `@Profile("{profile}")`
 
-- 프로퍼티
-	- java  : `new Properties().load(new FileInputStream("~"));`
-	- XML ① : `<util:properties location="~" />`
-	- XML ② : `<context:propertyplaceholder location="~" />`
+	- 프로퍼티
+		- java  : `new Properties().load(new FileInputStream("~"));`
+		- XML ① : `<util:properties location="~" />`
+		- XML ② : `<context:propertyplaceholder location="~" />`
 
-	※ 프로퍼티는 ISO-8859-1 인코딩만 지원 => `new Properties().loadFromXML("~") 사용`
+		※ 프로퍼티는 ISO-8859-1 인코딩만 지원 => `new Properties().loadFromXML("~") 사용`
 
-	- 환경변수, 시스템 프로퍼티, jndi에 유용하게 사용
+		- 환경변수, 시스템 프로퍼티, jndi에 유용하게 사용
 
 ## 데이터 액세스 기술
 
@@ -177,7 +172,7 @@
 	- 단일 로우 조회 시, 결과가 없으면 EmptyResultDataAccessException 발생
 	- 다중 컬럼 조회 시, RowMapper 나 BeanPropertySqlParameterSource 사용
 	- SimpleJdbcInsert 는 테이블 별로 만들어서 사용
-	- SimpleJdbcCall 은 저장 프로시저나 저장 펑션에 사용 
+	- SimpleJdbcCall 은 저장 프로시저나 저장 펑션에 사용
 - 스프링 JDBC 설계법
 	- DataSource 를 DI로 갖고, JdbcTemplate 와 JdbcInsert, JdbcCall을 생성
 		`why ?) JdbcInsert, JdbcCall은 DAO마다 다른 오브젝트를 갖는 경향이 있다.`
@@ -275,7 +270,7 @@
 - MVC 아키텍처는 보통 프론트 컨트롤러 패턴과 함께 적용된다.
 	```text
 		HTTP 요청 → DispatcherServlet ↔ Controller
-							↑↓              ↓
+		                   ↑↓               ↓
 		HTTP 응답 ←        View            Model
 	```
 	1. DispatcherServlet 의 HTTP 요청 접수
@@ -296,25 +291,25 @@
 	5. DispatcherServlet 의 뷰 호출과 모델 참조
 		- 클라이언트에게 전달할 최종 결과물( JSP, PDA / RSS, JSON ) 생성 요청
 		- 최종적으로 HttpServletResponse 에 담김.
- 
+
 	6. HTTP 응답 돌려주기
 		- HttpServletResponse 를 서블릿 컨테이너에 전달
-      
+
 - HandlerMapping
 	- 컨트롤러 결정 로직을 담당
 	- BeanNameUrlHandlerMapping / DefaultAnnotationHandlerMapping
-   
+
 - HandlerAdapter
 	- DispatcherServlet 이 선택할 컨트롤러를 호출할 때 사용
 	- HttpRequestHandlerAdapter / SimpleControllerHandlerAdapter / AnnotationMethodHandlerAdapter
 	- 핸들로 매핑과 어댑터는 관련이 없을 수 있다.
 	- 하지만 @RequestMapping / @Controller 경우, DefaultAnnotationHandlerMapping 로 핸들러를 지정하고, AnnotationMethodHandlerAdapter 로 대응되어 호출된다.
-   
+
 - HandlerExceptionResolver
 	- 예외가 발생했을 때 처리하는 로직
 	- DispatcherServlet 을 통해 처리돼야 한다.
 	- AnnotationMethodHandlerExceptionResolver / ResponseStatusExceptionResolver / DefaultHandlerExceptionResolver
-   
+
 - ViewResolver
 	- 뷰 이름을 참고하여, 적절한 뷰 오브젝트를 찾아주는 전략 오브젝트.
 	- InternalResourceViewResolver
@@ -411,33 +406,33 @@
 		- InternalResourceView
 			- RequestDispatcher 의 forward() 와 include() 이용
 			- 다른 서블릿을 이용하여 그 결과를 현재 서블릿의 결과로 사용하거나 추가하는 방식
-		
+
 		- JstlView
 			- InternalResourceView 의 서브클래스이다.
 			- 지역화된 메시지를 사용 가능
-	
+
 		- RedirectView
 			- HttpServletResponse 의 sendRedirect()를 호출해주는 기능
-	
+
 		- VelocityView, FreeMarkerView
 			- 밸로시티와 프리마터라는 자바 템플릿 엔진을 뷰로 사용하게 해준다.
 			- VelocityViewResolver 와 FreeMarkerViewResolver 를 통해 자동으로 뷰가 만들어져 사용되게 하는 편이 좋다.
 			- JSP 에 비해 문법이 강력하고 속도가 빠른 템플릿이다.
 			- 서블릿을 구동시켜야하는 JSP 에 반해 별도의 템플릿 엔진으로 뷰를 생성하기 떄문에 단위 테스트도 쉽다.
-			
+
 		- MarshallingView
 			- OXM 추상화 기능 뷰
 			- XML 로 변환 하여 뷰의 결과로 사용할 수 있다.
-		
+
 		- AbstractExcelView, AbstractJExcelView, AbstractPdfView
 			- 엑셀과 PDF 문서를 만들어주는 뷰
-	
+
 		- AbstractAtomFeedView, AbstractRssFeedView
 			- application/atom+xml 과 application/rss+xml 타입의 피드 문서 생성
-	
+
 		- XsltView, TilesView, AbstractJasperReportsView
 			- xslt 변환을 이용한 뷰 생성, Tiles 뷰 생성, 리포트 작성용 프레임워크인 JasperReports 를 이용해 CSV, HTML, PDF, Excel 작성.
-	
+
 		- MappingJacksonJsonView
 			- JSON 타입의 콘텐트를 작성해주는 뷰
 
@@ -446,16 +441,16 @@
 		- ViewResolver 인터페이스를 구현해야 한다.
 		- InternalResourceViewResolver
 			- 뷰 리졸버를 지정하지 않았을 때, 자동등록되는 디폴트 뷰 리졸버
-			
+
 		- VelocityViewResolver, FreeMarkerViewResolver
 			- ~~Configurer 경로 지정해줘야한다.
-		
+
 		- ResourceBundleViewResolver, XmlViewResolver, BeanNameViewResolver
 			- 여러 가지 종류의 뷰를 혼용하거나 뷰의 종류를 코드 밖에서 변경해줘야 하는 경우 사용
 			- ResourceBundleViewResolver 는 클래스패스의 views.properties 를 찾아 사용한다.
 			- XmlViewResolver 은 /WEB-INF/views.xml 를 찾아 사용한다.
 			- BeanNameViewResolver 은 뷰 이름과 동일한 빈 이름을 가진 빈을 찾아서 뷰로 사용하게 된다.
-			
+
 		- ContentNegotiatingViewResolver
 			- 스프링 3.0에서 추가된 뷰 리졸버
 			- 뷰 리졸버를 결정해주는 리졸버
@@ -468,7 +463,7 @@
 				- viewResolvers 로 사용할 뷰 리졸버 지정
 			- 미디어 타입 비교를 통한 최종 뷰 선정
 				- 미디어 타입과 뷰 리졸버에서 찾은 후보 뷰 목록을 매칭해서 뷰 결정
-				
+
 - 기타 전략
 	- 핸들러 예외 리졸버 ( HandlerExceptionResolver )
 		- 해당 리졸버가 등록되어 있다면, web.xml 에 `<error-page>`를 등록한 것 보다 우선적으로 처리된다.
@@ -477,33 +472,33 @@
 			- AnnotationMethodHandlerExceptionResolver
 				- 특정 Exception 에 대해 특별한 처리가 필요한 경우
 				- @ExceptionHandler 사용
-				
+
 			- ResponseStatusExceptionResolver
 				- HTTP 500 에러 대신 의미 있는 HTTP 응답 상태 값을 보여주는 것
 				- @ResponseStatus 사용
-				
+
 			- DefaultHandlerExceptionResolver
 				- 스프링 내부적으로 발생하는 주요 예외를 처리해주는 표준 예외처리 로직
-			
+
 			- SimpleMappingExceptionResolver
 				- web.xml 에 `<error-page>`와 비슷하게 예를 처리할 뷰를 지정할 수 있게 해준다.
-	
+
 	- 지역정보 리졸버 ( LocaleResolver )
 		- 지역정보를 결정하는 전략
 		- 브라우저의 기본 설정따라 보내지는 AcceptHeaderLocaleResolver 를 디폴트로 사용된다.
 		- 사용자가 직접 변경하도록 만드려면 SessionLocaleResolver 나 CookieLocaleResolver 를 사용한다.
-		
+
 	- 멀티파트 리졸버 ( CommonsMultipartResolver )
 		- 파일 업로드와 같이 멀티파트 포맷의 요청정보를 처리하는 전략 설정
 		- apapche commons 의 fileUpload 만 지원한다.
 		- 디폴트로 등록되는 것이 없다.
 		- 과다한 크기의 파일 업로드를 막기 위해 maxUploadSize 프로퍼티를 설정하도록 권장한다.
-		
+
 	- RequestToViewNameTranslator
 		- 뷰 이름이나 뷰 오브젝트를 돌려주지 않았을 경우 HTTP 요청정보를 참고하여 뷰 이름을 생성해주는 로직을 담고 있다.
 		- DefaultRequestToViewNameTranslator 가 기본적으로 등록되어 있다.
 			- URL 을 기준으로 해서 뷰 이름을 결정
-			
+
 ### 스프링 3.1의 MVC
 - 플래시 맵 매니저 전략
 	- 플래시 맵
@@ -511,19 +506,19 @@
 		- 플래시 애트리뷰트는 다음 요청에서 한 번 사용되고 바로 제거됨
 		- Post/Redirect/Get 패턴
 		- URL 조건과 제한시간을 지정 가능
-	
+
 	- 플래시 맵 매니저
 		- 플래시 맵을 저장하고, 유지하고, 조회하고, 제거하는 등의 작업을 담당하는 오브젝트
 		- FlashMapManager 인터페이스 구현
-	
+
 	- 플래시 맵 매니저 전략
 		- 플래시 맵 정보는 HTTP 세션을 이용하여 저장된다. ( SessionFlashMapManager )
-		
+
 - WebApplicationInitializer 를 이용한 컨텍스트 등록
 	- WAS 의 서블릿 컨테이너가 서블릿 3.0이나 그 이상을 지원하지 않는다면 사용 불가능
 	- web.xml 탈피, 설정 방식을 모듈화 관리 가능
 	- 스프링 3.1에서는 ServletContainerInitializer 이용
-	
+
 ## @MVC
 
 ### @RequestMapping
@@ -550,7 +545,7 @@
 		3. 하위 타입과 메소드의 재정의
 		4. 서브클래스 메소드의 URL 패턴 없는 재정의
 		5. 제네릭스와 매핑정보 상속을 이용한 컨트롤러 작성
-		
+
 ### @Controller
 
 - @MVC 에 가장 강력하고 획기적인 방법
@@ -582,28 +577,28 @@
 	- Map, Model, ModelMap
 	- View
 	- @ResponseBody
-	
+
 - @SessionAttributes 와 SessionStatus
 	- 데이터 유지
 	- 필요성 이유
 		1. 히든 필드
 		2. DB 재조회
 		3. 계층 사이의 강한 결합
-	
+
 	- @SessionAttributes
 		- 기본적으로 HttpSession 이용
 		- @ModelAttribute 로 해당 오브젝트를 가져올 수 있다.
-	
+
 	- SessionStatus
 		- 세션 제거
-		
+
 ### 모델 바인딩과 검증
 
 - @Controller 에서 @ModelAttribute 가 지정된 파라미터를 가져올 때 3가지 과정을 거친다.
 	1. 파타미터 타입의 오브젝트를 만든다.
 	2. 준비된 오브젝트의 파라미터에 웹 파라미터를 바인딩 해준다.
 	3. 모델의 값을 검증하는 것이다.
-	
+
 - 바인딩
 	1. XML 설정 파일을 사용하여 빈을 정의할 경우
 	2. HTTP 을 통해 전달되는 클라이언트의 요청을 모델 오브젝트로 변환할 경우
@@ -613,25 +608,25 @@
 	- 자바빈 표준에 정의된 인터페이스
 	- `org.springframework.beans.propertyeditors` 패키지에 구현되어 있음
 	- PropertyEditorSupport 으로 간단하게 구현
-	
+
 - @InitBinder
 	- HTTP 요청 파라미터가 적절히 변환돼서 들어가도록 만드는 것
 	- AnnotationMethodHandlerAdapter 는 애노테이션에 바인딩 해줄 때, WebDataBinder 를 만든다.
-	
+
 - WebBindingInitializer
 	- 바인딩이 애플리케이션 전반에 걸쳐 폭넓게 필요한 경우
-	
+
 - 프로토타입 빈 프로퍼티 에디터
 	- 프로퍼티 에디터는 thread safe 하지 못 하다.
 	- 방법
 		1. 별도의 codeId 필드로 바인딩
 		2. 모조 오브젝트 프로퍼티 에디터
 		3. 프로토타입 도메인 오브젝트 프로퍼티 에디터
-		
+
 - Converter 와 Formatter
 	- Converter
 		- 단방형 변환만 지원
-	
+
 	- ConversionService
 		- 컨트롤러 바인딩
 		- 보통은 GenericConversionService 클래스 빈을 사용하면 된다.
@@ -639,26 +634,26 @@
 			- WebDataBinder 에 GenericConversionService 를 설정하는 방법
 				1. @InitBinder 수동 등록
 				2. ConfigurableWebBindingInitializer 를 이용한 일괄 등록
-				
+
 	- Formatter 와 FormattingConversionService
 		- 범용적인 타입 변환 API
 		- FormattingConversionServiceFactoryBean
 			- 기본적으로 등록되는 Formatter
 				1. @NumberFormat
 				2. @DateTimeFormat
-	
+
 	- 바람직한 활용 전략
 		- 사용자 정의 타입의 바인딩을 위한 일괄 적용 : Converter
 		- 필드와 메소드 파라미터, 애노테이션 등의 메타정보를 활용하는 조건부 변환 기능 : ConditionGenericConverter
 		- 애노테이션 정보를 활용한 HTTP 요청과 모델 필드 바인딩 : AnnotationFormatterFactory 와 Formatter
 		- 특정 필드에만 적용되는 변환 기능 : PropertyEditor
-		
+
 	- WebDataBinder 설정 항목
 		- allowedFields, disallowFields : @ModelAttribute 바인딩에서 시용하고자 하는 필드 지정
 		- requiredFields : 바인딩 시, 필수로 요구되는 필드 지정
 		- fieldMarkerPrefix : 체크박스 같은 값을 히든 필드에 넣을 때, 앞에 붙이는 접두어 지정
 		- fieldDefaultPrefix : 체크박스 기본 값을 히든 필드에 넣을 때, 앞에 붙이는 접두어 지정
-		
+
 - Validator 와 BindingResult, Errors
 	- Validator 표준 인터페이스
 	- BindingResult 는 Errors 의 서브 인터페이스
@@ -671,23 +666,23 @@
 			2. @Valid 이용한 자동 검증
 			3. 서비스 계층 오브젝트에서의 검증
 			4. 서비스 계층을 활용하는 Validator
-			
+
 	- JSR-303 빈 검증 기능
 		- LocalValidatorFactoryBean 이용
-	
+
 	- BindingResult 와 MessageCodeResolver
 		- BindingResult 에는 타입 변환 오류정보와 검증 작업에 발견된 검증 오류정보가 모두 저장
 		- 기본적으로 에러 메시지는 messages.properties  와 같은 프로퍼티에서 가져온다.
 		- MessageCodeResolver 를 통해 메시지 키 값으로 확장된다.
 		- 기본적으로 DefaultMessageCodeResolver 활용한다.
-	
+
 	- MessageSource
 		- MessageSourceResolver 를 한 번 더 거쳐 최종적인 메시지를 만든다.
 		- 구현 방법
 			1. 코드로 등록 : StaticMessageSource
 			2. 리소스 번들 방식( messages.properties ) : ResourceBundleMessageSource
-				- 일정 주기로 재갱신(재시작 안해도 됨) : ReloadableResourceBundleMessageSource 
-		
+				- 일정 주기로 재갱신(재시작 안해도 됨) : ReloadableResourceBundleMessageSource
+
 		- 4가지 정보 활용
 			1. 코드
 			2. 메시지 파라미터 배열
@@ -695,7 +690,7 @@
 			4. 지역정보
 - 모델의 일생
 	- 모델은 MVC 아키텍처에서 정보를 담당하는 컴포넌트이다.
-	
+
 	- HTTP 요청으로부터 컨트롤러 메소드까지
 		- @ModelAttribute 메소드 파라미터
 		- @SessionAttribute 세션 저장 대상 모델 이름
@@ -703,22 +698,22 @@
 		- WebDataBinder 에 등록된 검증기
 		- ModelAndView 의 모델 맵
 		- 컨트롤러 메소드와 BindingResult 파라미터
-	
+
 	- 컨트롤러 메소드부터 뷰까지
 		- ModelAndView 의 모델 맵
 		- WebDataBinder 에 기본적으로 등록된 MessageCodeResolver
 		- 빈으로 등록된 MessageSource 와 LocaleResolver
 		- @SessionAttribute 세션 저장 대상 모델 이름
 		- 뷰의 EL 과 스프링 태그 또는 매크로
-		
+
 ### JSP 뷰와 form 태그
 
 - EL과 spring 태그 라이브러리를 이용한 모델 출력
 	- JSP/JSTL
-	
+
 	- JSP EL
 		- ${key} 접근
-	
+
 	- 스프링 SpEL
 		- JSP EL 보다 유연하고 강력한 표현식 지원
 		- spring 태그 라이브러리 추가
@@ -726,7 +721,7 @@
 		- 표현식 작성
 			- `<spring:eval expression="{필드}.toString()" />`
 			- @NumberFormat, @DataTimeFormat 같은 포맷터 적용 가능
-	
+
 	- 지역화 메시지 출력
 		- 언어별 messages.properties 적용 가능, message 태그
 			- `<spring:messasge code="{key}" />`
@@ -749,7 +744,7 @@
 			- 서블릿 필터로 HiddenHttpMethodFilter 추가
 			- `<input type="hidden" name="_method" value="{method} />"`
 		- action
- 	
+
 	- `<form:input>`
 		- input 태그
 		- path
@@ -884,7 +879,7 @@
 - 새로운 RequestMapping 전략
 	- DispatcherServlet 전략 클래스 변경
 		- 유연한 확정성을 가질 수 있도록 개선
-		
+
 	- @RequestMapping 메소드와 핸드러 매핑 전략의 불일치
 	- HandleMethod : @RequestMapping이 붙은 메소드의 정보를 추상화한 오브젝트 타입
 		- 빈 오브젝트
@@ -894,7 +889,7 @@
 		- 메소드 리턴 값 메타정보
 	- @RequestMapping 전략 선택
 		- 3.1 이후에는 자바 코드를 이용한 @MVC 방식 권장
-	
+
 - @RequestMapping 핸들러 매핑 : RequestMappingHandlerMapping
 	- 요청 조건
 		- 3.0 : URL, 패턴, 메소드, 파라미터, HTTP 헤더
@@ -906,7 +901,7 @@
 		- 헤더 : HeaderRequestCondition
 		- Content-Type 헤더 : ConsumesRequestCondition
 		- Accept-Type 헤더 : ProducesRequestCondition
-		
+
 - @RequestMapping 핸들러 어댑터
 	- 파라미터 타입
 		- @Validated/@Valid
@@ -923,7 +918,7 @@
 	- 확장 포인트
 		- 파라미터
 		- 리턴 값
-		
+
 - @EnableWebMvc와 WebMvcConfigurationSupport를 이용한 @MVC 설정
 	- `<mvc:annotation-config/>` 와 @EnableWebMvc 동일
 	- 빈 설정자 : @Enable 전용 애노테이션의 설정을 위해 사용되는 빈 컨피규어러
@@ -941,6 +936,119 @@
 	- 빈 등록 방법
 		1. @EnableWebMvc 와 WebMvcConfigurer 구현 클래스 Bean 등록
 		2. @EnableWebMvc에 WebMvcConfigurer 구현
-		3. @EnableWebMvc에 WebMvcConfigurerAdapter 구현	
+		3. @EnableWebMvc에 WebMvcConfigurerAdapter 구현
 	- 전략용 설정 빈 등록
-		- InternalResoureceViewResolver 빈 등록
+		- InternalResourceViewResolver 빈 등록
+
+## AOP와 LTW
+
+### 애스펙트 AOP
+
+- 모듈화된 부가기능과 적용 대상의 조합을 통해 여러 오브젝트에 산재해서 나타나는 공통적인 기능을 손쉽게 개발하고 관리할 수 있는 기술
+- 자바 JDK 다이나믹 프록시나 바이트 코드 조작 기술 없이도 프록시 기반 AOP 개발 제공
+- 방법
+	1. AOP 인터페이스 구현과 `<bean>` 등록
+	2. AOP 인터페이스 구현과 `<aop:advisor>` 등록
+	3. 임의의 자바 클래스와 `<aop:aspect>` 등록
+	4. @AspectJ 등록
+- 자동 프록시 생성기와 프록시 빈
+	- @Autowired의 타입에 의한 의존관게 설정에 문제를 일으키지 않는다.
+	- 다른 빈들이 해당 오브젝트에 직접 의존하지 못하게 한다.
+- 프록시의 종류
+	- JDK 다이나믹 프록시
+	- CGLib (바이트코드 생성 라이브러리)
+
+		> 기존에 개발한 레거시 코드나 외부에서 개발한 인터페이스 없는 라이브러리의 클래스 등에도 적용할 수 있게 해주기 위해
+
+### @AspectJ AOP
+
+- 에스펙트 : 필요한 부가기능을 추상화해놓은 것
+- 준비 사항
+	- `<aop:aspectj-autoproxy />`
+	- 핵심 애노테이션 : @Aspect
+- 구성요소
+	- 포인트 컷 : @Pointcut
+	- 어드바이스 : @Before, @After, @AfterReturning, @AfterThrowing, @Around
+- 포인트컷 메소드와 애노테이션
+	- 작성법
+	```text
+	애노테이션      표현식                      반드시 void    ()포함하여 포인컷 이름으로 사용된다.
+	@Pointcut("execution(* method(...))") private void proxy_method();
+	```
+	- execution()
+		- 리턴 타입, 타입, 메소드, 파라미터 타입, 예외 타입 조건 조합의 메소드 단위
+	- within()
+		- 타입 패턴만 적용
+
+	> `.*`은 해당 패키지 바로 밑의 클래스와 인터페이스만, `..*`은 해당 패키지 밑의 모두 포함
+
+	- this, target
+		- 하나의 타입을 지정하는 방식
+		- this는 빈 오브젝트 타입
+		- target은 타깃 오브젝트 타입
+	- args
+		- 메소드의 파라미터 타입만을 이용
+		- within이나 target 같은 타입 레벨과 조합
+	- @target, @within
+		- @target은 타깃 오브젝트에 특정 애노테이션이 부여된 것은 선정
+		- @within은 타깃 오브젝트의 클래스에 특정 애노테이션이 부여된 것을 찾는다. (슈퍼 클래스의 메소드는 해당되지 않는다.)
+	- @args
+		- args와 유사하게 파라미터를 이용해 선정
+	- @annotation
+		- 특정 애노테이션이 있는 것만 선정
+	- bean
+		- 빈 이름 또는 아이디를 이용해서 선정
+	- &&
+		- 두개의 포인트컷 또는 지시자는 AND 조건으로 결합
+	- ||, !
+		- ||은 OR 조건
+		- !은 NOT 조건
+- 어드바이스 메소드와 애노테이션
+	- @Around : 타깃 오브젝트의 메소드가 호출되는 전 과정을 모두 담을 수 있는 어드바이스
+		- 파라미터 : ProceedingJoinPoint 타입 오브젝트(타깃 오브젝트의 메소드 결과 받을 수 있다.)
+		- 메소드 n번 호출, 파라미터 변경, 메소드 호출 방지 가능
+	- @Before : 타깃 오브젝트의 메소드가 실행되기 전에 사용되는 어드바이스
+		- 호출하는 방식 제어 불가능, 파라미터 변경 불가능
+		- 파라미터 : JoinPoint(ProceedingJoinPoint의 슈퍼 인터페이스)
+	- @AfterReturning : 타깃 오브젝트의 메소드가 정상적으로 실행을 마친 뒤에 실행되는 어드바이스
+		- returning 엘리먼트를 이용하여 리턴 값 파라미터 이름 지정
+		- 리턴 값을 조작할 수 없지만, 참조하는 오브젝트는 조작할 수 있다.
+		- JoinPoint
+	- @AfterThrowing : 타깃 오브젝트의 메소드에서 예외가 발생하면 실행되는 어드바이스
+		- throwing 엘리먼트를 이용하여 발생한 예외를 받을 수 있다.
+	- @After : 메소드 실행이 마쳤을 때 실행되는 어드바이스
+		- finally와 비슷한 용도
+		- 반드시 반환돼야 하는 리소스가 있거나 로그를 남겨야 하는 경우에 사용
+		- 리턴 값이나 예외를 직접 전달 받을 수는 없다.
+- 파라미터 선언과 바인딩
+	- 포인트컷 표현식과 타입 정보를 파라미터와 연결하는 방법
+	- 패키지 이름을 포함한 클래스 이름 전체를 적어야 한다.
+- @AspectJ를 이용한 AOP의 학습 방법과 적용 전략
+	- 객체지향적인 방법으로 해결할 수 있는 방법을 불필요하게 AOP를 이용하려고 하지말아야 한다.
+	- 충분한 테스트를 작성해야한다.
+	- 포인트컷 적용 대상을 제대로 확인한다.
+
+#### AspectJ와 @Configuration
+
+- AspectJ AOP
+	- 가장 강력한 AOP 프레임워크
+- 빈이 아닌 오브젝트에 DI 적용하기
+	- 스프링 빈이 아니라더라도 수정자 메소드를 가진 임의의 오브젝트에 DI를 할 수 있다.
+- DI 애스펙트
+	- @Configurable
+	- `<bean>` 등록
+	- autowire 옵션 추가
+	- @Autowired 설정
+
+#### 로드타임 위버(LTW)
+
+- 활용
+	1. @Configurable 지원
+	2. 트랜잭션 AOP를 AspectJ로 지원
+	3. JPA 로드타임 위버 사용
+
+#### 스프링 3.1의 AOP와 LTW
+
+- AOP와 LTW를 위한 애노테이션
+	- @EnableAspectJAutoProxy
+	- @EnableLoadTimeWeaving
