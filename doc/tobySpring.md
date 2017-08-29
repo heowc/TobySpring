@@ -1087,3 +1087,100 @@
 - 자바 코드 설정정보와 프로파일 활용
 	- @Configuration 클래스 테스트
 	- @ActiveProfile
+
+## 스프링의 기타 기술과 효과적인 학습 방법
+
+### 스프링 기술과 API를 효과적으로 학습하는 방법
+
+- 일관된 방식으로 개발된 프레임워크
+- 빈으로 등록되는 스프링 클래스와 DI
+	- 다른 빈에 의해 DI 돼서 사용되는 서비스
+	- 다른 빈이란 정보에 의존
+	- 구현 인터페이스 분석
+	- 프로퍼티 분석
+	- DI/확장 포인트 분석
+		- DelegatingDataSource 확장
+			- LazyConnectionDataSourceProxy : 트랜잭션 매니저와 DataSource의 커넥션 생성 지연시켜주는 프록시
+			- AbstaractRoutingDataSource : 다중 DataSource에 대한 라우팅을 제공하는 프록시(lookup 키와 DataSource 맵 정의)
+
+### IoC 컨테이너 DI
+
+- BeanPostProcessor와 BeanFactoryPostProcessor
+	- BeanPostProcessor
+		- 빈 후처리기
+		- @Autowired나 @Inject 같은 애노테이션을 이용한 빈 의존관계 적용 작업
+		- 자동 프록시 생성기 구현
+	- BeanFactoryPostProcessor
+		- 빈 팩토리 후 처리기
+		- 빈의 메타정보 자체를 조작
+		- @Configuration 의 빈 등록 작업
+
+### SpEL
+
+- 스프링 EL == SpEL
+- SpEL 사용 방법
+	- ExpressionParser : 표현식 파싱 기능 정의
+	- Expression : 해석된 표현식 정보를 가진 오브젝트 타입
+
+### OXM
+
+- Marshaller/Unmarshaller 인터페이스
+	- 오브젝트를 XML로 변환하는 기능을 추상화한 인터페이스
+	- 스프링에는 MarshallingView와 MarshallingMessageConverter가 있다.
+- OXM 기술 어댑터 클래스
+	- Castor, JAXB, XMLBeans, JiBX, XStream 지원
+
+### 리모팅과 웹 서비스, EJB
+
+- 리모팅 : 원격 시스템과 스프링 애플리케이션이 연동해서 동작하게 해주는 기술
+- RMI, 스프링 HTTP Invoker, Hessian, Burlap, JAX-RPC, JAX-WS, JMS, RESTful
+- 익스포터와 프록시
+	- 익스포터 : 원격 요청을 받아서 특정 인터페이스를 구현한 서비스 빈에게 요청을 전달해주는 빈
+	- 프록시 : 원격 시스템에 있는 오브젝트를 대신해서 클라이언트 오브젝트의 호출을 받고, 이를 원격 오브젝트에 전송해서 결과를 가져와 클라이언트 오브젝트에게 돌려주는 역할을 맡은 빈
+- RESTful 서비스 템플릿
+	- 템플릿/콜백 방식의 템플릿을 이용
+	- HTTP 메소드 지원, 메시지 컨버터로 오브젝트 변환
+	``text
+	RestTemplate restTemplate = new RestTemplate();
+	```
+- EJB 서비스 이용
+	- EJB2나 EJB3로 만들어진 컴포넌트, EJB 컨테이너 사용 가능
+
+### 태스크 실행과 스케줄링
+
+- TaskExecutor 서비스 추상화
+	- 태스크(Task) : 독립적인 스레드 안에서 동작하도록 만들어진 오브젝트를 독립적으로 실행 가능한 작업
+	- 태스크 실행기(TaskExecutor) : 태스크를 다양한 방법으로 실행하도록 만들어진 인터페이스
+		- ThreadPoolExecutor : JDK의 ThreadPoolExecutor
+		- SimpleThreadPoolTaskExecutor : Quartz의 SimpleThreadPool
+		- WorkManagerTaskExecutor : CommonJ 작업관리자(WorkManager)의 태스크 실행기
+- TaskScheduler
+	- 스케줄링 기술에 독립적인 사용이 가능한 추상화 서비스 인터페이스
+	- ThreadPoolTaskSchduler : JDK의 ScheduledThreadPoolExecutor 스케줄러
+	- TimeManagerTaskScheduler : CommonJ의 TimeManager를 추상화한 클래스
+
+### 캐시 추상화(스프링 3.1)
+
+- AOP를 이용해 메소드 실행 과정에 투명하게 적용
+- 애노테이션을 이용한 캐시 속성 부여
+	- @Cacheable : 메소드 단위 캐시 지정
+		- SpEL로 키 값 지정
+	- @CacheEvict : 캐시 제거
+	- @CachePut : 캐시에 저장하는 용도로만
+- @EnableCaching
+- 캐시 매니저
+	- ConcurrentMapCacheManager : ConcurrentHashMap 사용
+	- SimpleCacheManager : 기본적으로 제공하는 캐시가 없음
+	- EnCacheCacheManager : 가장 인기 있는 캐시 프레임워크의 하나인 EnCache를 지원
+	- CompositeCacheManager, NoOpCacheManager : 하나 이상의 캐시 매니저를 사용하도록 지원해주는 혼합 캐시 매니저
+
+### @Enable 애노테이션을 이용한 빈 설정정보 모듈화
+
+- 효과적인 재사용
+- @Import와 @Configuration 상속
+- @Configuration 클래스 상속과 오버라이딩을 이용한 확장 방법
+- @Enable 전용 애노테이션과 ImprotAware
+- 빈 설정자 : ~~Configurer
+- ImportSelector와 ImportBeanDefibitionRegistrar
+	- ImportSelector : @Enable 옵션에 따른 다른 @Configuration 적용
+	- ImportBeanDefibitionRegistrar : 옵션에 따라 복잡한 빈 설정 조합
