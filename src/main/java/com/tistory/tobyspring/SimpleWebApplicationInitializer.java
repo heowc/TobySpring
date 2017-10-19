@@ -1,6 +1,7 @@
 package com.tistory.tobyspring;
 
 import com.tistory.tobyspring.config.WebConfig;
+import com.tistory.tobyspring.listener.SessionListener;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -25,6 +26,8 @@ public class SimpleWebApplicationInitializer implements WebApplicationInitialize
 
 		ServletContextListener listener = new ContextLoaderListener(context);
 		servletContext.addListener(listener);
+
+		servletContext.addListener(SessionListener.class);
 	}
 
 	private void initServletContext(ServletContext servletContext) {
